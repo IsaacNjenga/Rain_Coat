@@ -8,31 +8,20 @@ import { useNavigate } from "react-router-dom";
 function Home({ weatherMain }) {
   const [loading, setLoading] = useState(false);
   let [currentDateTime, setCurrentDateTime] = useState(new Date());
-  const [data, setData] = useState({
-    celcius: "",
-    name: "",
-    humidity: "",
-    speed: "",
-    image: null,
-    description: "",
-    country: "",
-    tempMax: "",
-    tempMin: "",
-    feelsLike: "",
-    sunrise: "",
-    sunset: "",
-  });
+  const [data, setData] = useState([]);
   const [data2, setData2] = useState([]);
   const [name, setName] = useState("");
   const [error, setError] = useState("");
+  const [favourites, setFavourites] = useState([]);
+  const [isFavourite, setIsFavourite] = useState(false);
+  const [todaysData, setTodaysData] = useState([]);
   const [location, setLocation] = useState({
     latitude: "",
     longitude: "",
   });
-  const [favourites, setFavourites] = useState([]);
-  const [isFavourite, setIsFavourite] = useState(false);
-  const [todaysData, setTodaysData] = useState([]);
+  const navigate = useNavigate();
 
+  //Getting the user's Location with permision ofc
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -51,26 +40,20 @@ function Home({ weatherMain }) {
     }
   }, []);
 
+  //Proceeding to fetch the data from the API if granted permission
   useEffect(() => {
     if (location) {
       fetchWeatherData(location.latitude, location.longitude);
     }
   }, [location]);
 
+  //Making sure that the time and date is being refreshed
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentDateTime(new Date());
     }, 1000);
-
     return () => clearInterval(intervalId);
   }, []);
-
-  /*const formattedDate = currentDateTime.toLocaleDateString("en-GB", {
-    weekday: "short",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });*/
 
   const formattedTime = currentDateTime.toLocaleTimeString("en-US", {
     hour: "2-digit",
@@ -98,11 +81,12 @@ function Home({ weatherMain }) {
     }
   };
 
+  //Loading icons for the weather app
   const getForecastDisplay = (forecastMain) => {
     return <WeatherIcon weatherMain={forecastMain} />;
   };
 
-  //data
+  //Data from the API being processed
   const fetchWeatherData = async (lat, long) => {
     try {
       setLoading(true);
@@ -118,13 +102,18 @@ function Home({ weatherMain }) {
       const forecastWeather = response2.data.list.slice(0, 40);
       const weatherDisplay = getWeatherDisplay(weatherMain);
 
+      const today = new Date();
       const todayDate = new Date().toISOString().split("T")[0];
+
+      const tomorrow = new Date();
+      tomorrow.setDate(today.getDate() + 1);
+      const tomorrowDate = tomorrow.toISOString().split("T")[0];
 
       const processedForecastData = forecastWeather
         .map((forecast) => {
           const dateString = forecast.dt_txt;
           const forecastDate = new Date(dateString).toISOString().split("T")[0];
-          const formattedDateString = new Date(dateString).toLocaleDateString(
+          let formattedDateString = new Date(dateString).toLocaleDateString(
             "en-GB",
             {
               year: "numeric",
@@ -169,54 +158,60 @@ function Home({ weatherMain }) {
         })
         .filter(Boolean);
 
-      const processedForecastData2 = forecastWeather
-        .map((forecast) => {
-          const dateString = forecast.dt_txt;
-          const forecastDate = new Date(dateString).toISOString().split("T")[0];
-          const formattedDateString = new Date(dateString).toLocaleDateString(
-            "en-GB",
-            {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              weekday: "short",
-            }
-          );
-
-          const formattedTimeString = new Date(dateString).toLocaleTimeString(
-            "en-GB",
-            {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            }
-          );
-
-          const forecastWeatherMain = forecast.weather[0].main;
-          const forecastWeatherDisplay =
-            getForecastDisplay(forecastWeatherMain);
-
-          const description =
-            forecast.weather[0].description.charAt(0).toUpperCase() +
-            forecast.weather[0].description.slice(1).toLowerCase();
-
-          if (forecastDate !== todayDate) {
-            return {
-              celcius: forecast.main.temp,
-              name: response2.data.city.name,
-              humidity: forecast.main.humidity,
-              speed: forecast.wind.speed,
-              image: forecastWeatherDisplay,
-              description: description,
-              country: response2.data.city.country,
-              date: formattedDateString,
-              time: formattedTimeString,
-            };
-          } else {
-            return null;
+      const groupedData = forecastWeather.reduce((acc, forecast) => {
+        if (forecast.dt_txt) {
+          // Ensure dt_txt exists
+          const dateString = forecast.dt_txt.split(" ")[0];
+          if (!acc[dateString]) {
+            acc[dateString] = [];
           }
-        })
-        .filter(Boolean);
+          acc[dateString].push(forecast);
+        }
+        return acc;
+      }, {});
+
+      const processedForecastData2 = Object.keys(groupedData).map((date) => {
+        const dayForecasts = groupedData[date];
+        const total = dayForecasts.reduce(
+          (acc, forecast) => {
+            acc.temp += forecast.main.temp;
+            return acc;
+          },
+          { temp: 0 }
+        );
+
+        // Compute average temperature
+        const averageTemp = total.temp / dayForecasts.length;
+
+        // Find the weather condition for the day
+        const weatherMain = dayForecasts[0].weather[0].main;
+        const forecastWeatherDisplay = getForecastDisplay(weatherMain);
+
+        // Format the date
+        let formattedDateString = "";
+        if (date === todayDate) {
+          formattedDateString = "Today";
+        } else if (date === tomorrowDate) {
+          formattedDateString = "Tomorrow";
+        } else {
+          formattedDateString = new Date(date).toLocaleDateString("en-US", {
+            month: "2-digit",
+            day: "2-digit",
+          });
+        }
+
+        // Get the short description
+        const description =
+          dayForecasts[0].weather[0].description.charAt(0).toUpperCase() +
+          dayForecasts[0].weather[0].description.slice(1).toLowerCase();
+
+        return {
+          day: formattedDateString,
+          image: forecastWeatherDisplay,
+          averageTemp: averageTemp.toFixed(1),
+          description: description,
+        };
+      });
 
       setTodaysData(processedForecastData);
       setData2(processedForecastData2);
@@ -259,6 +254,7 @@ function Home({ weatherMain }) {
     }
   };
 
+  //Adjusting the UI according to the user's search input
   const handleClick = () => {
     if (name !== "") {
       setLoading(true);
@@ -312,7 +308,12 @@ function Home({ weatherMain }) {
             toast.success(word);
           }
 
+          const today = new Date();
           const todayDate = new Date().toISOString().split("T")[0];
+
+          const tomorrow = new Date();
+          tomorrow.setDate(today.getDate() + 1);
+          const tomorrowDate = tomorrow.toISOString().split("T")[0];
 
           const forecastData = forecastWeatherResponse.data.list.slice(0, 40);
 
@@ -370,59 +371,60 @@ function Home({ weatherMain }) {
             })
             .filter(Boolean);
 
-          const processedForecastData2 = forecastData
-            .map((forecast) => {
-              const dateString = forecast.dt_txt;
-              const forecastDate = new Date(dateString)
-                .toISOString()
-                .split("T")[0];
-              const convertToDate = new Date(dateString);
-              const options = {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-                weekday: "short",
-              };
-
-              const optionsTime = {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              };
-              let formattedDateString = new Intl.DateTimeFormat(
-                "en-GB",
-                options
-              ).format(convertToDate);
-              const formattedTimeString = new Intl.DateTimeFormat(
-                "en-GB",
-                optionsTime
-              ).format(convertToDate);
-
-              const forecastWeatherMain = forecast.weather[0].main;
-              const forecastWeatherDisplay =
-                getForecastDisplay(forecastWeatherMain);
-
-              const description =
-                forecast.weather[0].description.charAt(0).toUpperCase() +
-                forecast.weather[0].description.slice(1).toLowerCase();
-
-              if (forecastDate !== todayDate) {
-                return {
-                  celcius: forecast.main.temp,
-                  name: forecastWeatherResponse.data.city.name,
-                  humidity: forecast.main.humidity,
-                  speed: forecast.wind.speed,
-                  image: forecastWeatherDisplay,
-                  description: description,
-                  country: forecastWeatherResponse.data.city.country,
-                  date: formattedDateString,
-                  time: formattedTimeString,
-                };
-              } else {
-                return null;
+            const groupedData = forecastData.reduce((acc, forecast) => {
+              if (forecast.dt_txt) {
+                // Ensure dt_txt exists
+                const dateString = forecast.dt_txt.split(" ")[0];
+                if (!acc[dateString]) {
+                  acc[dateString] = [];
+                }
+                acc[dateString].push(forecast);
               }
-            })
-            .filter(Boolean);
+              return acc;
+            }, {});
+      
+            const processedForecastData2 = Object.keys(groupedData).map((date) => {
+              const dayForecasts = groupedData[date];
+              const total = dayForecasts.reduce(
+                (acc, forecast) => {
+                  acc.temp += forecast.main.temp;
+                  return acc;
+                },
+                { temp: 0 }
+              );
+      
+              // Compute average temperature
+              const averageTemp = total.temp / dayForecasts.length;
+      
+              // Find the weather condition for the day
+              const weatherMain = dayForecasts[0].weather[0].main;
+              const forecastWeatherDisplay = getForecastDisplay(weatherMain);
+      
+              // Format the date
+              let formattedDateString = "";
+              if (date === todayDate) {
+                formattedDateString = "Today";
+              } else if (date === tomorrowDate) {
+                formattedDateString = "Tomorrow";
+              } else {
+                formattedDateString = new Date(date).toLocaleDateString("en-US", {
+                  month: "2-digit",
+                  day: "2-digit",
+                });
+              }
+      
+              // Get the short description
+              const description =
+                dayForecasts[0].weather[0].description.charAt(0).toUpperCase() +
+                dayForecasts[0].weather[0].description.slice(1).toLowerCase();
+      
+              return {
+                day: formattedDateString,
+                image: forecastWeatherDisplay,
+                averageTemp: averageTemp.toFixed(1),
+                description: description,
+              };
+            });
 
           setTodaysData(processedForecastData);
           setData2(processedForecastData2);
@@ -441,6 +443,7 @@ function Home({ weatherMain }) {
     }
   };
 
+  //Adding a favourite city to the db
   const addToFavourites = (name) => {
     setFavourites((prevFavourites) => {
       const updatedFavourites = [...prevFavourites, name];
@@ -450,16 +453,18 @@ function Home({ weatherMain }) {
     toast.success(`Added '${name}' to favourites`);
   };
 
+  //Removing a favourite city from the db
   const removeFromFavourites = (name) => {
     setFavourites((prevFavourites) => {
       const updatedFavourites = prevFavourites.filter((fav) => fav !== name);
       return updatedFavourites;
     });
     setIsFavourite(false);
-    console.log(isFavourite)
+    console.log(isFavourite);
     toast.error(`Removed '${name}' from favourites`);
   };
 
+  //Toggling the icon for favourites
   const toggleFavourite = (name) => {
     if (favourites.includes(name)) {
       removeFromFavourites(name);
@@ -468,10 +473,10 @@ function Home({ weatherMain }) {
     }
   };
 
-  const navigate = useNavigate();
   const viewFavourites = () => {
     navigate("/favourites", { state: { favourites: favourites } });
   };
+
   return (
     <div className="container2">
       <div className="weather">
@@ -545,7 +550,7 @@ function Home({ weatherMain }) {
                         <div key={index}>
                           <p>{forecast.time}</p>
                           <p>{forecast.image}</p>
-                          <p>{forecast.description}</p>
+                          <p>{Math.round(forecast.celcius)}°C</p>
                         </div>
                       </div>
                     </div>
@@ -559,15 +564,16 @@ function Home({ weatherMain }) {
                   <div className="mini-weather2">
                     <div className="forecasted2">
                       <div key={index}>
-                        <p>{forecast.time}</p>
+                        <p>{forecast.day}</p>
                         <p>{forecast.image}</p>
+                        <p>{Math.round(forecast.averageTemp)}°C</p>
                         <p>{forecast.description}</p>
-                        <p>{forecast.date}</p>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
+
               <hr />
               <div className="details">
                 <div className="col-humidity">
