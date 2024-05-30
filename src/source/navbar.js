@@ -13,6 +13,12 @@ export default function Navbar() {
       <Link style={{ color: "#333", textDecoration: "none" }} to="/favourites">
         Favourite Cities
       </Link>
+      <Link
+        style={{ color: "#333", textDecoration: "none" }}
+        to="/login"
+      >
+        Login
+      </Link>
     </nav>
   );
 }

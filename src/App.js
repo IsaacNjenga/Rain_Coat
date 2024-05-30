@@ -5,6 +5,7 @@ import Home from "./pages/home";
 import Favourites from "./pages/favourites";
 import Navbar from "./source/navbar";
 import { Toaster } from "react-hot-toast";
+import Login from "./pages/login";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/favourites" element={<Favourites />} />
+            <Route path="/login" element={<Login />} />
           </Routes>
       </BrowserRouter>
     </div>
