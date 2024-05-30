@@ -139,8 +139,10 @@ function App() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=b882f0719ba7e08e90a827d174b54f6a&units=metric`;
-        const apiUrl2 = `https://api.openweathermap.org/data/2.5/forecast?q=nairobi&appid=b882f0719ba7e08e90a827d174b54f6a&units=metric`;
+        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=b882f0719ba7e08e90a827d174b54f6a&units=metric`; //current weather
+        const apiUrl2 = `https://api.openweathermap.org/data/2.5/forecast?q=nairobi&appid=b882f0719ba7e08e90a827d174b54f6a&units=metric`; //forecast
+        const apiUrl3 = "https://archive-api.open-meteo.com/v1/era5?latitude=52.52&longitude=13.41&start_date=2021-01-01&end_date=2021-12-31&hourly=temperature_2m" //historical data
+        console.log(apiUrl3)
 
         const [response, response2] = await Promise.all([
           axios.get(apiUrl),
