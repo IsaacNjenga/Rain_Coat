@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../source/firebase';
 
-function Login() {
+function SignUp() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -14,17 +14,17 @@ function Login() {
         setError('');
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            await createUserWithEmailAndPassword(auth, email, password);
             navigate('/');
         } catch {
-            setError('Failed to log in. Please check your credentials and try again.');
+            setError('Failed to create an account. Please try again.');
         }
     };
 
     return (
-        <div className="login-container">
-            <form onSubmit={handleSubmit} className="login-form">
-                <h2>Login</h2>
+        <div className="signup-container">
+            <form onSubmit={handleSubmit} className="signup-form">
+                <h2>Sign Up</h2>
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 <div>
                     <label>Email:</label>
@@ -44,13 +44,13 @@ function Login() {
                         required
                     />
                 </div>
-                <button type="submit">Login</button>
+                <button type="submit">Sign Up</button>
                 <p>
-                    Don't have an account? <Link to="/signup">Sign Up</Link>
+                    Already have an account? <Link to="/login">Login</Link>
                 </p>
             </form>
         </div>
     );
 }
 
-export default Login;
+export default SignUp;

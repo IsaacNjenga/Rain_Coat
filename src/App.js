@@ -6,6 +6,7 @@ import Favourites from "./pages/favourites";
 import Navbar from "./source/navbar";
 import { Toaster } from "react-hot-toast";
 import Login from "./pages/login";
+import SignUp from "./pages/signup";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/favourites" element={<Favourites />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
           </Routes>
       </BrowserRouter>
     </div>
