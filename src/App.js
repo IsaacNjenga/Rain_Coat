@@ -7,12 +7,14 @@ import Navbar from "./source/navbar";
 import { Toaster } from "react-hot-toast";
 import Login from "./pages/login";
 import SignUp from "./pages/signup";
+import { AuthProvider } from "./contexts/AuthContext";
 
 function App() {
   return (
     <div>
-      <BrowserRouter>
-        <Navbar/>
+      <AuthProvider>
+        <BrowserRouter>
+          <Navbar />
           <Toaster position="top-right" toastOptions={{ duration: 1500 }} />
           <Routes>
             <Route path="/" element={<Home />} />
@@ -20,7 +22,8 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
           </Routes>
-      </BrowserRouter>
+        </BrowserRouter>
+      </AuthProvider>
     </div>
   );
 }
