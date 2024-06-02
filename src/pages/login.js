@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../source/firebase';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import toast from 'react-hot-toast';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -15,7 +18,10 @@ function Login() {
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            navigate('/');
+            toast.success('You have logged in');
+            setTimeout(() => {
+                navigate('/');
+            }, 5000); //5 seconds delay before navigating
         } catch {
             setError('Failed to log in. Please check your credentials and try again.');
         }

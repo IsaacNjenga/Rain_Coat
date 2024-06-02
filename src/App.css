@@ -403,8 +403,9 @@ nav a.active {
 .login-form button,
 .signup-form button {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.6rem;
   background: #007bff;
+  margin-top: 10px;
   color: white;
   border: none;
   border-radius: 15px;
