@@ -652,6 +652,7 @@ function Home({ weatherMain }) {
 
   return (
     <div className="container2">
+      <div id="left"></div>
       <div id="middle">
         <div className="weather">
           <div
@@ -840,6 +841,7 @@ function Home({ weatherMain }) {
           )}
         </div>
       </div>
+      <div id="right"></div>
     </div>
   );
 }

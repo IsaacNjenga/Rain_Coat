@@ -30,7 +30,7 @@ body {
 }*/
 
 .morning-bg {
-  background-image: url("img/images/clear2.gif");
+  background-image: url("img/day2.jpg");
   background-size: 100%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -41,10 +41,14 @@ body {
 }
 
 .night-bg {
-  background-image: url("img/night-time.gif");
+  background-image: url("img/moony-night.jpg");
+  background-size: 100%;
+  background-repeat: no-repeat;
   background-size: cover;
+  color: rgb(16, 8, 8);
   background-position: center;
-  height: 100vh; /* Adjust as necessary */
+  width: 100%;
+  height: 100%;
 }
 
 .forecast-container {
