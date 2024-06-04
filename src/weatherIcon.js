@@ -1,176 +1,110 @@
 import React from "react";
+import sunIcon from "./img/icons/sun-color-icon.svg";
+import fogIcon from "./img/icons/cloud-fog-icon.svg";
+import drizzleIcon from "./img/icons/cloud-snow-icon.svg";
+import moderateRainIcon from "./img/icons/day-cloud-rain-icon.svg";
+import lightRainIcon from "./img/icons/day-cloud-snow-icon.svg";
+import showerRainIcon from "./img/icons/cloud-rain-icon.svg";
+import fewCloudsIcon from "./img/icons/cloud-icon.svg";
+import scatteredCloudsIcon from "./img/icons/cloudy-icon.svg";
+import brokenCloudsIcon from "./img/icons/cloudy-icon.svg";
+import overcastCloudsIcon from "./img/icons/day-cloudy-icon.svg";
+import heavyIntensityRain from "./img/icons/cloud-lightning-icon.svg";
+import clearNight from "./img/icons/evening-icon.svg";
+import foggyNight from "./img/icons/night-cloud-fog-icon.svg";
+import moderateRainyNight from "./img/icons/night-cloud-rain-icon.svg";
+import lightRainyNight from "./img/icons/night-cloud-snow-icon.svg";
+import cloudyNight from "./img/icons/night-cloudy-icon.svg";
+import showerRainyNight from "./img/icons/cloud-lightning-icon.svg";
 
-function WeatherIcon({ weatherMain }) {
-  switch (weatherMain) {
-    case "Clear":
-      return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 64 64"
-          width="55px"
-          height="55px"
-        >
-          <circle cx="32" cy="32" r="12" fill="yellow" stroke="none" />
-          <line
-            x1="32"
-            y1="5"
-            x2="32"
-            y2="15"
-            stroke="yellow"
-            strokeWidth="2"
-          />
-          <line
-            x1="32"
-            y1="49"
-            x2="32"
-            y2="59"
-            stroke="yellow"
-            strokeWidth="2"
-          />
-          <line
-            x1="5"
-            y1="32"
-            x2="15"
-            y2="32"
-            stroke="yellow"
-            strokeWidth="2"
-          />
-          <line
-            x1="49"
-            y1="32"
-            x2="59"
-            y2="32"
-            stroke="yellow"
-            strokeWidth="2"
-          />
-          <line
-            x1="13.5"
-            y1="13.5"
-            x2="19.5"
-            y2="19.5"
-            stroke="yellow"
-            strokeWidth="2"
-          />
-          <line
-            x1="44.5"
-            y1="44.5"
-            x2="50.5"
-            y2="50.5"
-            stroke="yellow"
-            strokeWidth="2"
-          />
-          <line
-            x1="13.5"
-            y1="50.5"
-            x2="19.5"
-            y2="44.5"
-            stroke="yellow"
-            strokeWidth="2"
-          />
-          <line
-            x1="44.5"
-            y1="19.5"
-            x2="50.5"
-            y2="13.5"
-            stroke="yellow"
-            strokeWidth="2"
-          />
-        </svg>
-      );
-    case "Clouds":
-      return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 64 64"
-          width="55px"
-          height="55px"
-        >
-          <g fill="none" stroke="none">
-            <circle cx="20" cy="20" r="10" fill="yellow" />
-            <path
-              d="M50.487,33.486C54.223,30.82,57,26.24,57,21c0-9.389-7.611-17-17-17c-6.259,0-11.696,3.232-14.654,8.043
-                C24.404,10.018,23.711,10,23,10C14.716,10,8,16.716,8,25c0,6.67,4.336,12.335,10.401,14.285"
-              fill="grey"
-            />
-          </g>
-        </svg>
-      );
-    case "Rain":
-      return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 64 64"
-          width="55px"
-          height="55px"
-        >
-          <g fill="none" strokeWidth="2">
-            <path
-              d="M50.487,33.486C54.223,30.82,57,26.24,57,21c0-9.389-7.611-17-17-17c-6.259,0-11.696,3.232-14.654,8.043
-                C24.404,10.018,23.711,10,23,10C14.716,10,8,16.716,8,25c0,6.67,4.336,12.335,10.401,14.285"
-              fill="none"
-              stroke="grey"
-            />
-            <line x1="23" y1="44" x2="23" y2="54" stroke="blue" />
-            <line x1="31" y1="44" x2="31" y2="54" stroke="blue" />
-            <line x1="39" y1="44" x2="39" y2="54" stroke="blue" />
-          </g>
-        </svg>
-      );
-    case "Drizzle":
-      return (
-        <i
-          className="fas fa-cloud-rain"
-          style={{ fontSize: "55px", color: "grey" }}
-        ></i>
-      );
-    case "Mist":
-      return (
-        <i
-          className="fas fa-smog"
-          style={{ fontSize: "55px", color: "grey" }}
-        ></i>
-      );
-    case "Snow":
-      return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 64 64"
-          width="55px"
-          height="55px"
-        >
-          <g fill="none" stroke="white" strokeWidth="2">
-            <circle cx="32" cy="32" r="12" fill="white" />
-            <line x1="32" y1="20" x2="32" y2="44" />
-            <line x1="20" y1="32" x2="44" y2="32" />
-            <line x1="24" y1="24" x2="40" y2="40" />
-            <line x1="24" y1="40" x2="40" y2="24" />
-          </g>
-        </svg>
-      );
-    case "Thunderstorm":
-      return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 64 64"
-          width="55px"
-          height="55px"
-        >
-          <g fill="none" stroke="none">
-            <path
-              d="M50.487,33.486C54.223,30.82,57,26.24,57,21c0-9.389-7.611-17-17-17c-6.259,0-11.696,3.232-14.654,8.043
-                C24.404,10.018,23.711,10,23,10C14.716,10,8,16.716,8,25c0,6.67,4.336,12.335,10.401,14.285"
-              fill="grey"
-            />
-            <polygon
-              points="24,42 32,52 28,52 36,62 30,52 36,42"
-              fill="yellow"
-            />
-          </g>
-        </svg>
-      );
-    default:
-      return <div>No Specific display</div>;
+function WeatherIcon({ weatherMain, weatherDescription, timeOfDay }) {
+  if (timeOfDay === "day") {
+    if (weatherMain === "Clear") {
+      return <img src={sunIcon} className="colored-svg" alt="Clear sky" />;
+    }
+
+    if (weatherMain === "Clouds") {
+      switch (weatherDescription) {
+        case "few clouds":
+          return <img src={fewCloudsIcon} alt="Few clouds" />;
+        case "scattered clouds":
+          return <img src={scatteredCloudsIcon} alt="Scattered clouds" />;
+        case "broken clouds":
+          return <img src={brokenCloudsIcon} alt="Broken clouds" />;
+        case "overcast clouds":
+          return <img src={overcastCloudsIcon} alt="Overcast clouds" />;
+        default:
+          return <img src={overcastCloudsIcon} alt="Cloudy" />;
+      }
+    }
+
+    if (weatherMain === "Rain") {
+      switch (weatherDescription) {
+        case "light rain":
+          return <img src={lightRainIcon} alt="Light rain" />;
+        case "moderate rain":
+          return <img src={moderateRainIcon} alt="Moderate rain" />;
+        case "heavy intensity rain":
+          return <img src={heavyIntensityRain} alt="Heavy rain" />;
+        case "shower rain":
+          return <img src={showerRainIcon} alt="Shower rain" />;
+        default:
+          return <img src={moderateRainIcon} alt="Rain" />;
+      }
+    }
+
+    if (weatherMain === "Drizzle") {
+      return <img src={drizzleIcon} alt="Drizzle" />;
+    }
+
+    if (weatherMain === "Mist") {
+      return <img src={fogIcon} alt="Mist" />;
+    }
+  } else if (timeOfDay === "night") {
+    if (weatherMain === "Clear") {
+      return <img src={clearNight} alt="Clear night" />;
+    }
+
+    if (weatherMain === "Clouds") {
+      switch (weatherDescription) {
+        case "few clouds":
+          return <img src={cloudyNight} alt="Few clouds night" />;
+        case "scattered clouds":
+          return <img src={cloudyNight} alt="Scattered clouds night" />;
+        case "broken clouds":
+          return <img src={cloudyNight} alt="Broken clouds night" />;
+        case "overcast clouds":
+          return <img src={cloudyNight} alt="Overcast clouds night" />;
+        default:
+          return <img src={cloudyNight} alt="Cloudy night" />;
+      }
+    }
+
+    if (weatherMain === "Rain") {
+      switch (weatherDescription) {
+        case "light rain":
+          return <img src={lightRainyNight} alt="Light rain night" />;
+        case "moderate rain":
+          return <img src={moderateRainyNight} alt="Moderate rain night" />;
+        case "heavy intensity rain":
+          return <img src={showerRainyNight} alt="Heavy rain night" />;
+        case "shower rain":
+          return <img src={showerRainyNight} alt="Shower rain night" />;
+        default:
+          return <img src={moderateRainyNight} alt="Rain night" />;
+      }
+    }
+
+    if (weatherMain === "Drizzle") {
+      return <img src={drizzleIcon} alt="Drizzle night" />;
+    }
+
+    if (weatherMain === "Mist") {
+      return <img src={foggyNight} alt="Mist night" />;
+    }
   }
+
+  return <div>No Specific display</div>;
 }
 
 export default WeatherIcon;

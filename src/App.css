@@ -18,28 +18,7 @@ body {
   color: rgb(255, 255, 255);
 }
 
-.clear {
-  background-image: url("img/clear.jpg");
-  background-size: cover;
-  background-position: center;
-  width: 100%;
-  height: 100%;
-}
-.clouds {
-  background-image: url("img/cloudy.gif");
-  background-size: cover;
-  background-position: center;
-  width: 100%;
-  height: 100%;
-}
-.rain {
-  background-image: url("img/rain.gif");
-  background-size: cover;
-  background-position: center;
-  width: 100%;
-  height: 100%;
-}
-.default {
+/*.default {
   background-image: url("img/clear2.gif");
   background-size: 100%;
   background-repeat: no-repeat;
@@ -48,6 +27,24 @@ body {
   background-position: center;
   width: 100%;
   height: 100%;
+}*/
+
+.morning-bg {
+  background-image: url("img/images/clear2.gif");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: rgb(16, 8, 8);
+  background-position: center;
+  width: 100%;
+  height: 100%;
+}
+
+.night-bg {
+  background-image: url("img/night-time.gif");
+  background-size: cover;
+  background-position: center;
+  height: 100vh; /* Adjust as necessary */
 }
 
 .forecast-container {
@@ -190,7 +187,7 @@ body {
 
 .details > div {
   text-align: center;
-  padding: 20px;
+  padding: 10px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s;
@@ -300,6 +297,47 @@ nav a {
 nav a.active {
   font-weight: bold; /* Style for active link */
   color: #000; /* Text color for active link */
+}
+
+.current-forecast img {
+  width: 130px;
+  height: auto;
+  object-fit: contain;
+}
+
+.day-forecast img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.week-forecast img {
+  width: 100px;
+  height: 50px;
+  object-fit: contain;
+}
+
+#left {
+  float: left;
+  background: rgba(255, 0, 0, 0);
+  width: 33%;
+  height: auto;
+  margin: 50px auto;
+}
+
+#middle {
+  float: left;
+  background: rgba(0, 128, 0, 0);
+  width: 33%;
+  height: 280px;
+}
+
+#right {
+  float: right;
+  background: rgba(0, 0, 255, 0);
+  width: 33%;
+  height: 280px;
+  margin: 50px auto;
 }
 
 /*loader*/
