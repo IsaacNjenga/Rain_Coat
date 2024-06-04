@@ -1,21 +1,22 @@
 import React from "react";
-import sunIcon from "./img/icons/sun-color-icon.svg";
-import fogIcon from "./img/icons/cloud-fog-icon.svg";
-import drizzleIcon from "./img/icons/cloud-snow-icon.svg";
-import moderateRainIcon from "./img/icons/day-cloud-rain-icon.svg";
-import lightRainIcon from "./img/icons/day-cloud-snow-icon.svg";
-import showerRainIcon from "./img/icons/cloud-rain-icon.svg";
-import fewCloudsIcon from "./img/icons/cloud-icon.svg";
-import scatteredCloudsIcon from "./img/icons/cloudy-icon.svg";
-import brokenCloudsIcon from "./img/icons/cloudy-icon.svg";
-import overcastCloudsIcon from "./img/icons/day-cloudy-icon.svg";
-import heavyIntensityRain from "./img/icons/cloud-lightning-icon.svg";
-import clearNight from "./img/icons/evening-icon.svg";
-import foggyNight from "./img/icons/night-cloud-fog-icon.svg";
-import moderateRainyNight from "./img/icons/night-cloud-rain-icon.svg";
-import lightRainyNight from "./img/icons/night-cloud-snow-icon.svg";
-import cloudyNight from "./img/icons/night-cloudy-icon.svg";
-import showerRainyNight from "./img/icons/cloud-lightning-icon.svg";
+import sunIcon from "./img/icons/sun.png";
+import fogIcon from "./img/icons/foggy-day.png";
+import drizzleIcon from "./img/icons/drizzle.png";
+import moderateRainIcon from "./img/icons/moderate-rain.png";
+import lightRainIcon from "./img/icons/light rain.png";
+import showerRainIcon from "./img/icons/shower.png";
+import fewCloudsIcon from "./img/icons/cloud and sun.png";
+import scatteredCloudsIcon from "./img/icons/sun and scattered clouds.png";
+import brokenCloudsIcon from "./img/icons/broken clouds.png";
+import overcastCloudsIcon from "./img/icons/overcast clouds.png";
+import heavyIntensityRain from "./img/icons/heavy-intensity-rain.png";
+import clearNight from "./img/icons/calm night.png";
+import foggyNight from "./img/icons/foggy-night.png";
+import moderateRainyNight from "./img/icons/rainy night.png";
+import lightRainyNight from "./img/icons/night-rain.png";
+import cloudyNight from "./img/icons/night-cloud.png";
+import showerRainyNight from "./img/icons/heavy-rainy-night.png";
+
 
 function WeatherIcon({ weatherMain, weatherDescription, timeOfDay }) {
   if (timeOfDay === "day") {
