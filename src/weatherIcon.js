@@ -17,7 +17,6 @@ import lightRainyNight from "./img/icons/night-rain.png";
 import cloudyNight from "./img/icons/night-cloud.png";
 import showerRainyNight from "./img/icons/heavy-rainy-night.png";
 
-
 function WeatherIcon({ weatherMain, weatherDescription, timeOfDay }) {
   if (timeOfDay === "day") {
     if (weatherMain === "Clear") {
@@ -33,6 +32,17 @@ function WeatherIcon({ weatherMain, weatherDescription, timeOfDay }) {
         case "broken clouds":
           return <img src={brokenCloudsIcon} alt="Broken clouds" />;
         case "overcast clouds":
+          return <img src={overcastCloudsIcon} alt="Overcast clouds" />;
+        case "haze":
+          return <img src={overcastCloudsIcon} alt="Overcast clouds" />;
+        default:
+          return <img src={overcastCloudsIcon} alt="Cloudy" />;
+      }
+    }
+
+    if (weatherMain === "Clouds") {
+      switch (weatherDescription) {
+        case "haze":
           return <img src={overcastCloudsIcon} alt="Overcast clouds" />;
         default:
           return <img src={overcastCloudsIcon} alt="Cloudy" />;

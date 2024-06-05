@@ -31,6 +31,7 @@ function Home({ weatherMain }) {
   const [weeklyData, setWeeklyData] = useState([]);
   const [dataKey, setDataKey] = useState("Temperature");
   const navigate = useNavigate();
+  const [bgClass, setBgClass] = useState("");
 
   //Getting the user's Location with permision ofc
   useEffect(() => {
@@ -72,26 +73,6 @@ function Home({ weatherMain }) {
     second: "2-digit",
   });
 
-  /*const getWeatherDisplay = (weatherMain) => {
-    switch (weatherMain) {
-      case "Clear":
-        return "clear";
-      case "Clouds":
-        return "clouds";
-      case "Rain":
-        return "rain";
-      case "Drizzle":
-      case "Mist":
-        return (
-          <i className="material-icons" style={{ fontSize: "90px" }}>
-            cloud
-          </i>
-        );
-      default:
-        return "default";
-    }
-  };*/
-
   const currentDayTime = () => {
     let dayTime = new Date();
     const currentDate = dayTime.toISOString().slice(0, 10);
@@ -99,7 +80,6 @@ function Home({ weatherMain }) {
     return `${currentDate} ${currentTime}`;
   };
 
-  const [bgClass, setBgClass] = useState("");
   useEffect(() => {
     const currentHour = new Date().getHours();
     if (currentHour >= 6 && currentHour < 18) {
@@ -616,6 +596,19 @@ function Home({ weatherMain }) {
     return conditionName;
   };
 
+  const getColor = (key) => {
+    switch (key) {
+      case "Temperature":
+        return "red";
+      case "Humidity":
+        return "blue";
+      case "Wind":
+        return "green";
+      default:
+        return "black"; // Default color
+    }
+  };
+
   //Adding a favourite city to the db
   const addToFavourites = (name) => {
     setFavourites((prevFavourites) => {
@@ -681,11 +674,14 @@ function Home({ weatherMain }) {
                     <br />
                     <p className="current-forecast">{data.image}</p>
                   </div>
-                  <h1>
-                    <span className="current">
-                      {Math.round(data.celcius)}°C
-                    </span>
-                  </h1>
+                  <span>
+                    <h1>
+                      <span className="current">
+                        {Math.round(data.celcius)}°C
+                      </span>
+                    </h1>
+                    <h4>Feels like {Math.round(data.feelsLike)}°C</h4>
+                  </span>
                   <div className="temperature">
                     <p>
                       <span className="high">
@@ -792,7 +788,8 @@ function Home({ weatherMain }) {
                     <Line
                       type="monotone"
                       dataKey={dataKey}
-                      stroke="red"
+                      stroke={getColor(dataKey)}
+                      strokeWidth={2.5}
                       activeDot={{ r: 8 }}
                     />
                   </LineChart>
