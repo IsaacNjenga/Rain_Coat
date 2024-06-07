@@ -32,6 +32,20 @@ function Home({ weatherMain }) {
   const [dataKey, setDataKey] = useState("Temperature");
   const navigate = useNavigate();
   const [bgClass, setBgClass] = useState("");
+  const [units, setUnits] = useState("metric");
+  const [unitName, setUnitName] = useState({ temp: "C", speed: "Km/h" });
+
+  //changing units to metric
+  const metric = () => {
+    setUnits("metric");
+    setUnitName({ temp: "C", speed: "Km/h" });
+  };
+
+  //changing units to imperial
+  const imperial = () => {
+    setUnits("imperial");
+    setUnitName({ temp: "F", speed: "Mph" });
+  };
 
   //Getting the user's Location with permision ofc
   useEffect(() => {
@@ -57,7 +71,7 @@ function Home({ weatherMain }) {
     if (location) {
       fetchWeatherData(location.latitude, location.longitude);
     }
-  }, [location]);
+  }, [location, units]);
 
   //Making sure that the time and date is being refreshed
   useEffect(() => {
@@ -93,8 +107,8 @@ function Home({ weatherMain }) {
   const fetchWeatherData = async (lat, long) => {
     try {
       setLoading(true);
-      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=b882f0719ba7e08e90a827d174b54f6a&units=metric`;
-      const apiUrl2 = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${long}&appid=b882f0719ba7e08e90a827d174b54f6a&units=metric`;
+      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=b882f0719ba7e08e90a827d174b54f6a&units=${units}`;
+      const apiUrl2 = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${long}&appid=b882f0719ba7e08e90a827d174b54f6a&units=${units}`;
 
       const [response, response2] = await Promise.all([
         axios.get(apiUrl),
@@ -206,7 +220,6 @@ function Home({ weatherMain }) {
         };
         const timeOfDay = getDayOrNight(dateString);
         const dayForecasts = groupedData[date];
-        console.log(dayForecasts);
         const total = dayForecasts.reduce(
           (acc, forecast) => {
             acc.temp += forecast.main.temp;
@@ -307,8 +320,8 @@ function Home({ weatherMain }) {
   const handleClick = () => {
     if (name !== "") {
       setLoading(true);
-      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${name}&appid=b882f0719ba7e08e90a827d174b54f6a&units=metric`;
-      const apiForecast = `https://api.openweathermap.org/data/2.5/forecast?q=${name}&appid=b882f0719ba7e08e90a827d174b54f6a&units=metric`;
+      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${name}&appid=b882f0719ba7e08e90a827d174b54f6a&units=${units}`;
+      const apiForecast = `https://api.openweathermap.org/data/2.5/forecast?q=${name}&appid=b882f0719ba7e08e90a827d174b54f6a&units=${units}`;
 
       Promise.all([axios.get(apiUrl), axios.get(apiForecast)])
         .then(([currentWeatherResponse, forecastWeatherResponse]) => {
@@ -587,11 +600,11 @@ function Home({ weatherMain }) {
   const dataKeyName = (dataKey) => {
     let conditionName = "";
     if (dataKey === "Temperature") {
-      conditionName = "Temperature (°C)";
+      conditionName = `Temperature (°${unitName.temp})`;
     } else if (dataKey === "Humidity") {
       conditionName = "Humidity (%)";
     } else {
-      conditionName = "Wind (Km/h)";
+      conditionName = `Wind (${unitName.speed})`;
     }
     return conditionName;
   };
@@ -653,6 +666,8 @@ function Home({ weatherMain }) {
             style={{ borderRadius: "35px", padding: "20px" }}
           >
             <p>{formattedTime}</p>
+            <button onClick={metric}>Metric</button>
+            <button onClick={imperial}>Imperial</button>
             <div className="search">
               <input
                 type="text"
@@ -677,19 +692,21 @@ function Home({ weatherMain }) {
                   <span>
                     <h1>
                       <span className="current">
-                        {Math.round(data.celcius)}°C
+                        {Math.round(data.celcius)}°{unitName.temp}
                       </span>
                     </h1>
-                    <h4>Feels like {Math.round(data.feelsLike)}°C</h4>
+                    <h4>
+                      Feels like {Math.round(data.feelsLike)}°{unitName.temp}
+                    </h4>
                   </span>
                   <div className="temperature">
                     <p>
                       <span className="high">
-                        High: {Math.round(data.tempMax)}°C/
+                        High: {Math.round(data.tempMax)}°{unitName.temp}/
                       </span>
                       {""}
                       <span className="low">
-                        Low: {Math.round(data.tempMin)}°C
+                        Low: {Math.round(data.tempMin)}°{unitName.temp}
                       </span>
                     </p>
                   </div>
@@ -729,7 +746,9 @@ function Home({ weatherMain }) {
                           <div key={index}>
                             <p>{forecast.time}</p>
                             <p className="day-forecast">{forecast.image}</p>
-                            <p>{Math.round(forecast.celcius)}°C</p>
+                            <p>
+                              {Math.round(forecast.celcius)}°{unitName.temp}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -745,7 +764,9 @@ function Home({ weatherMain }) {
                         <div key={index}>
                           <p>{forecast.day}</p>
                           <p className="week-forecast">{forecast.image}</p>
-                          <p>{Math.round(forecast.averageTemp)}°C</p>
+                          <p>
+                            {Math.round(forecast.averageTemp)}°{unitName.temp}
+                          </p>
                           <p>{forecast.description}</p>
                         </div>
                       </div>
@@ -802,7 +823,9 @@ function Home({ weatherMain }) {
                     <div className="humidity">
                       <p className="humidity-value">{data.humidity}%</p>
                       <p>Humidity</p>
-                      <p>Feels like: {Math.round(data.feelsLike)}°C</p>
+                      <p>
+                        Feels like: {Math.round(data.feelsLike)}°{unitName.temp}
+                      </p>
                     </div>
                   </div>
                   <div className="col-wind">
@@ -810,7 +833,7 @@ function Home({ weatherMain }) {
                     <i className="material-icons wind-icon">air</i>
                     <div className="wind">
                       <p className="wind-speed">
-                        {Math.round(data.speed)} Km/h
+                        {Math.round(data.speed)} {unitName.speed}
                       </p>
                       <p>Wind Speed</p>
                     </div>
