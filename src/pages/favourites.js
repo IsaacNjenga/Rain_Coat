@@ -10,7 +10,7 @@ function Favourites() {
   useEffect(() => {
     if (currentUser) {
       axios
-        .get(`favourites/${currentUser.uid}`)
+        .get(`/favourites/${currentUser.uid}`)
         .then((result) => {
           const sortedFavourites = result.data.sort((a, b) => {
             return a.name.localeCompare(b.name);

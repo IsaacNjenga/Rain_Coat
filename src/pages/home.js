@@ -44,7 +44,7 @@ function Home({ weatherMain }) {
 
   const fetchFavourites = (userId) => {
     axios
-      .get(`favourites/${userId}`)
+      .get(`/favourites/${userId}`)
       .then((result) => {
         const sortedFavourites = result.data.sort((a, b) =>
           a.name.localeCompare(b.name)
@@ -132,8 +132,8 @@ function Home({ weatherMain }) {
   const fetchWeatherData = async (lat, long) => {
     try {
       setLoading(true);
-      const apiUrl = `weather?lat=${lat}&lon=${long}&units=${units}`;
-      const apiUrl2 = `forecast?lat=${lat}&lon=${long}&units=${units}`;
+      const apiUrl = `/weather?lat=${lat}&lon=${long}&units=${units}`;
+      const apiUrl2 = `/forecast?lat=${lat}&lon=${long}&units=${units}`;
 
       const [response, response2] = await Promise.all([
         axios.get(apiUrl),
@@ -345,10 +345,10 @@ function Home({ weatherMain }) {
   const handleClick = async () => {
     if (name !== "") {
       setLoading(true);
-      const apiUrl = `cityweather?name=${encodeURIComponent(
+      const apiUrl = `/cityweather?name=${encodeURIComponent(
         name
       )}&units=metric`;
-      const apiForecast = `cityforecast?name=${encodeURIComponent(
+      const apiForecast = `/cityforecast?name=${encodeURIComponent(
         name
       )}&units=metric`;
 
@@ -654,7 +654,7 @@ function Home({ weatherMain }) {
   //Adding a favourite city to the db
   const addToFavourites = (name) => {
     axios
-      .post(`addFavourite`, {
+      .post(`/addFavourite`, {
         userId: currentUser.uid,
         name,
       })
@@ -674,7 +674,7 @@ function Home({ weatherMain }) {
   //Removing a favourite city from the db
   const removeFromFavourites = async (id) => {
     try {
-      await axios.delete(`removeFavourite/${id}`);
+      await axios.delete(`/removeFavourite/${id}`);
       setFavourites((prevFavourites) =>
         prevFavourites.filter((fav) => fav._id !== id)
       );
