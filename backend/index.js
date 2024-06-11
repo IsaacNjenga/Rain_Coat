@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json()); // to parse JSON bodies
 app.use(
   cors({
-    origin: ["https://weather-app-delta-lac-75.vercel.app"],
+    origin: ["http://localhost:3000"],
     methods: ["POST", "GET", "PUT", "DELETE"],
     credentials: true,
   })
