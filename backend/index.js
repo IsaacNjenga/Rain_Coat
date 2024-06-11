@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: false }));
 
 mongoose
   .connect(
-    "mongodb+srv://IsaacNjenga:cations!@cluster0.xf14h71.mongodb.net/weatherApp"
+    "mongodb+srv://IsaacNjenga:cations!@cluster0.xf14h71.mongodb.net/weatherApp?retryWrites=true&w=majority&appName=Cluster0"
   )
   .then(() => console.log("database connected"))
   .catch((err) => console.log("Error", err));
