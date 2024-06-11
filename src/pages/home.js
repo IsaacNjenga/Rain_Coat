@@ -132,8 +132,8 @@ function Home({ weatherMain }) {
   const fetchWeatherData = async (lat, long) => {
     try {
       setLoading(true);
-      const apiUrl = `/weather?lat=${lat}&lon=${long}&units=${units}`;
-      const apiUrl2 = `/forecast?lat=${lat}&lon=${long}&units=${units}`;
+      const apiUrl = `weather?lat=${lat}&lon=${long}&units=${units}`;
+      const apiUrl2 = `forecast?lat=${lat}&lon=${long}&units=${units}`;
 
       const [response, response2] = await Promise.all([
         axios.get(apiUrl),
@@ -345,10 +345,10 @@ function Home({ weatherMain }) {
   const handleClick = async () => {
     if (name !== "") {
       setLoading(true);
-      const apiUrl = `/cityweather?name=${encodeURIComponent(
+      const apiUrl = `cityweather?name=${encodeURIComponent(
         name
       )}&units=metric`;
-      const apiForecast = `/cityforecast?name=${encodeURIComponent(
+      const apiForecast = `cityforecast?name=${encodeURIComponent(
         name
       )}&units=metric`;
 

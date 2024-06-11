@@ -10,7 +10,7 @@ import Login from "./pages/login";
 import SignUp from "./pages/signup";
 import { AuthProvider } from "./contexts/AuthContext";
 
-axios.defaults.baseURL = "https://rain-coat-backend.vercel.app";
+axios.defaults.baseURL = "https://rain-coat-backend.vercel.app/";
 axios.defaults.withCredentials = true;
 function App() {
   return (
