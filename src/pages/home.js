@@ -26,8 +26,8 @@ function Home({ weatherMain }) {
   const [isFavourite, setIsFavourite] = useState(false);
   const [todaysData, setTodaysData] = useState([]);
   const [location, setLocation] = useState({
-    latitude: 1.3107,
-    longitude: 36.825,
+    latitude: "",
+    longitude: "",
   });
   const [weeklyData, setWeeklyData] = useState([]);
   const [dataKey, setDataKey] = useState("Temperature");
@@ -35,26 +35,30 @@ function Home({ weatherMain }) {
   const [units, setUnits] = useState("metric");
   const [unitName, setUnitName] = useState({ temp: "C", speed: "Km/h" });
   const { currentUser } = useAuth();
+  const [clickedFavourites, setClickedFavourites] = useState(false);
 
   useEffect(() => {
     if (currentUser) {
-      fetchFavourites(currentUser.uid);
+      axios
+        .get(`/favourites/${currentUser.uid}`)
+        .then((result) => {
+          const sortedFavourites = result.data.sort((a, b) => {
+            return a.name.localeCompare(b.name);
+          });
+          setFavourites(sortedFavourites);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   }, [currentUser]);
 
-  const fetchFavourites = (userId) => {
-    axios
-      .get(`/favourites/${userId}`)
-      .then((result) => {
-        const sortedFavourites = result.data.sort((a, b) =>
-          a.name.localeCompare(b.name)
-        );
-        setFavourites(sortedFavourites);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  useEffect(() => {
+    if (clickedFavourites) {
+      handleClick(name);
+      setClickedFavourites(false);
+    }
+  }, [clickedFavourites]);
 
   //changing units to metric
   const metric = () => {
@@ -696,216 +700,264 @@ function Home({ weatherMain }) {
   };
 
   return (
-    <div className="container2">
-      {currentUser ? (
-        <div id="middle">
-          <div className="weather">
-            <div
-              className={`container ${bgClass}`}
-              style={{ borderRadius: "35px", padding: "20px" }}
-            >
-              {currentUser ? <p>Welcome, {currentUser.email}</p> : null}
-              <p>{formattedTime}</p>
-              <button onClick={metric}>Metric</button>
-              <button onClick={imperial}>Imperial</button>
-              <div className="search">
-                <input
-                  type="text"
-                  placeholder="Enter City name"
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <button onClick={handleClick}>
-                  <i className="material-icons">search</i>
-                </button>
-              </div>
-              <div className="error">
-                <p>{error}</p>
-              </div>
-              {!error && (
-                <div className="winfo">
-                  <div className="weather-info">
-                    <div className="description">
-                      <h3>{data.description}</h3>
-                      <br />
-                      <p className="current-forecast">{data.image}</p>
-                    </div>
-                    <span>
-                      <h1>
-                        <span className="current">
-                          {Math.round(data.celcius)}°{unitName.temp}
-                        </span>
-                      </h1>
-                      <h4>
-                        Feels like {Math.round(data.feelsLike)}°{unitName.temp}
-                      </h4>
-                    </span>
-                    <div className="temperature">
-                      <p>
-                        <span className="high">
-                          High: {Math.round(data.tempMax)}°{unitName.temp}/
-                        </span>
-                        {""}
-                        <span className="low">
-                          Low: {Math.round(data.tempMin)}°{unitName.temp}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                  <h4>
-                    <span style={{ display: "inline-block" }}>
-                      {data.name}, {data.country}
-                    </span>
-                    <button
-                      className="favourites"
-                      onClick={() => toggleFavourite(data.name)}
-                    >
-                      {favourites.some((fav) => fav.name === data.name) ? (
-                        <i
-                          className="fa-solid fa-heart"
-                          style={{ color: "red", fontSize: "25px" }}
-                        ></i>
-                      ) : (
-                        <i
-                          className="fa-regular fa-heart"
-                          style={{ color: "white", fontSize: "25px" }}
-                        ></i>
-                      )}
-                    </button>
-                  </h4>
-                  <hr />
-                  <p>
-                    <u>All day, today</u>
-                  </p>
-                  {/* Forecast for the day */}
-                  <div className="forecast-container">
-                    {todaysData.map((forecast, index) => {
-                      return (
-                        <div className="mini-weather">
-                          <div className="forecasted">
-                            <div key={index}>
-                              <p>{forecast.time}</p>
-                              <p className="day-forecast">{forecast.image}</p>
-                              <p>
-                                {Math.round(forecast.celcius)}°{unitName.temp}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <hr />
-                  {/* Forecast for the week */}
-                  <div className="forecast-container2">
-                    {data2.map((forecast, index) => (
-                      <div className="mini-weather2">
-                        <div className="forecasted2">
-                          <div key={index}>
-                            <p>{forecast.day}</p>
-                            <p className="week-forecast">{forecast.image}</p>
-                            <p>
-                              {Math.round(forecast.averageTemp)}°{unitName.temp}
-                            </p>
-                            <p>{forecast.description}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <hr />
-                  {/* Graph goes here */}
-                  <button onClick={() => weeklyGraph("temp")}>Temp</button>{" "}
-                  <button onClick={() => weeklyGraph("humidity")}>
-                    Humidity
-                  </button>{" "}
-                  <button onClick={() => weeklyGraph("wind")}>Wind</button>
-                  <h2>{dataKeyName(dataKey)}</h2>
-                  <div>
-                    <LineChart
-                      width={600}
-                      height={300}
-                      data={weeklyData}
-                      margin={{ top: 20, right: 120, left: 0, bottom: 20 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis
-                        dataKey="name"
-                        label={{
-                          value: "",
-                          position: "insideBottomRight",
-                          offset: -5,
-                        }}
-                      />
-                      <YAxis
-                        label={{
-                          value: dataKeyName(dataKey),
-                          angle: -90,
-                          position: "insideLeft",
-                        }}
-                      />
-                      <Tooltip />
-                      <Legend />
-                      <Line
-                        type="monotone"
-                        dataKey={dataKey}
-                        stroke={getColor(dataKey)}
-                        strokeWidth={2.5}
-                        activeDot={{ r: 8 }}
-                      />
-                    </LineChart>
-                  </div>
-                  <hr />
-                  <div className="details">
-                    <div className="col-humidity">
-                      <h3>Comfort Level</h3>
-                      <i className="material-icons comfort-icon">water_drop</i>
-                      <div className="humidity">
-                        <p className="humidity-value">{data.humidity}%</p>
-                        <p>Humidity</p>
-                        <p>
-                          Feels like: {Math.round(data.feelsLike)}°
-                          {unitName.temp}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="col-wind">
-                      <h3>Wind</h3>
-                      <i className="material-icons wind-icon">air</i>
-                      <div className="wind">
-                        <p className="wind-speed">
-                          {Math.round(data.speed)} {unitName.speed}
-                        </p>
-                        <p>Wind Speed</p>
-                      </div>
-                    </div>
-                    <div className="col-sunrise-sunset">
-                      <h3>Sunrise & Sunset</h3>
-                      <i className="fas fa-sun sun-icon"></i>
-                      <div className="sunrise-sunset">
-                        <p>Sunrise: {data.sunrise}</p>
-                        <p>Sunset: {data.sunset}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
+    <div>
+      <div id="left">
+        <div className="details">
+          <div className="col-humidity">
+            <h3>Comfort Level</h3>
+            <i className="material-icons comfort-icon">water_drop</i>
+            <div className="humidity">
+              <p className="humidity-value">{data.humidity}%</p>
+              <p>Humidity</p>
+              <p>
+                Feels like: {Math.round(data.feelsLike)}°{unitName.temp}
+              </p>
             </div>
-
-            {loading && (
-              <div className="loader">
-                <div className="loader__circle"></div>
-                <div className="loader__circle"></div>
-                <div className="loader__circle"></div>
-                <div className="loader__circle"></div>
-              </div>
-            )}
+          </div>
+          <div className="col-wind">
+            <h3>Wind</h3>
+            <i className="material-icons wind-icon">air</i>
+            <div className="wind">
+              <p className="wind-speed">
+                {Math.round(data.speed)} {unitName.speed}
+              </p>
+              <p>Wind Speed</p>
+            </div>
+          </div>
+          <div className="col-sunrise-sunset">
+            <h3>Sunrise & Sunset</h3>
+            <i className="fas fa-sun sun-icon"></i>
+            <div className="sunrise-sunset">
+              <p>Sunrise: {data.sunrise}</p>
+              <p>Sunset: {data.sunset}</p>
+            </div>
           </div>
         </div>
-      ) : (
-        <div>
-          <Login />
+      </div>
+      <div id="middle">
+        <div className="container2">
+          {currentUser ? (
+            <div id="middle">
+              <div className="weather">
+                <div
+                  className={`container ${bgClass}`}
+                  style={{ borderRadius: "35px", padding: "20px" }}
+                >
+                  {currentUser ? <p>Welcome, {currentUser.email}</p> : null}
+                  <p>{formattedTime}</p>
+                  <button onClick={metric} class="unit-button metric-button">
+                    Metric
+                  </button>
+                  <button
+                    onClick={imperial}
+                    class="unit-button imperial-button"
+                  >
+                    Imperial
+                  </button>
+                  <br />
+                  <div className="search">
+                    <input
+                      type="text"
+                      placeholder="Enter City name"
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                    <button onClick={handleClick}>
+                      <i className="material-icons">search</i>
+                    </button>
+                  </div>
+                  <div className="error">
+                    <p>{error}</p>
+                  </div>
+                  {!error && (
+                    <div className="winfo">
+                      <div className="weather-info">
+                        <div className="description">
+                          <h3>{data.description}</h3>
+                          <br />
+                          <p className="current-forecast">{data.image}</p>
+                        </div>
+                        <span>
+                          <h1>
+                            <span className="current">
+                              {Math.round(data.celcius)}°{unitName.temp}
+                            </span>
+                          </h1>
+                          <h4>
+                            Feels like {Math.round(data.feelsLike)}°
+                            {unitName.temp}
+                          </h4>
+                        </span>
+                        <div className="temperature">
+                          <p>
+                            <span className="high">
+                              High: {Math.round(data.tempMax)}°{unitName.temp}/
+                            </span>
+                            {""}
+                            <span className="low">
+                              Low: {Math.round(data.tempMin)}°{unitName.temp}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                      <h4>
+                        <span style={{ display: "inline-block" }}>
+                          {data.name}, {data.country}
+                        </span>
+                        <button
+                          className="favourites"
+                          onClick={() => toggleFavourite(data.name)}
+                        >
+                          {favourites.some((fav) => fav.name === data.name) ? (
+                            <i
+                              className="fa-solid fa-heart"
+                              style={{ color: "red", fontSize: "25px" }}
+                            ></i>
+                          ) : (
+                            <i
+                              className="fa-regular fa-heart"
+                              style={{ color: "white", fontSize: "25px" }}
+                            ></i>
+                          )}
+                        </button>
+                      </h4>
+                      <hr />
+                      <p>
+                        <u>All day, today</u>
+                      </p>
+                      {/* Forecast for the day */}
+                      <div className="forecast-container">
+                        {todaysData.map((forecast, index) => {
+                          return (
+                            <div className="mini-weather">
+                              <div className="forecasted">
+                                <div key={index}>
+                                  <p>{forecast.time}</p>
+                                  <p className="day-forecast">
+                                    {forecast.image}
+                                  </p>
+                                  <p>
+                                    {Math.round(forecast.celcius)}°
+                                    {unitName.temp}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <hr />
+                      {/* Forecast for the week */}
+                      <div className="forecast-container2">
+                        {data2.map((forecast, index) => (
+                          <div className="mini-weather2">
+                            <div className="forecasted2">
+                              <div key={index}>
+                                <p>{forecast.day}</p>
+                                <p className="week-forecast">
+                                  {forecast.image}
+                                </p>
+                                <p>
+                                  {Math.round(forecast.averageTemp)}°
+                                  {unitName.temp}
+                                </p>
+                                <p>{forecast.description}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <hr />
+                      {/* Graph goes here */}
+                      <button onClick={() => weeklyGraph("temp")}>
+                        Temp
+                      </button>{" "}
+                      <button onClick={() => weeklyGraph("humidity")}>
+                        Humidity
+                      </button>{" "}
+                      <button onClick={() => weeklyGraph("wind")}>Wind</button>
+                      <h2>{dataKeyName(dataKey)}</h2>
+                      <div>
+                        <LineChart
+                          width={600}
+                          height={300}
+                          data={weeklyData}
+                          margin={{ top: 20, right: 120, left: 0, bottom: 20 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis
+                            dataKey="name"
+                            label={{
+                              value: "",
+                              position: "insideBottomRight",
+                              offset: -5,
+                            }}
+                          />
+                          <YAxis
+                            label={{
+                              value: dataKeyName(dataKey),
+                              angle: -90,
+                              position: "insideLeft",
+                            }}
+                          />
+                          <Tooltip />
+                          <Legend />
+                          <Line
+                            type="monotone"
+                            dataKey={dataKey}
+                            stroke={getColor(dataKey)}
+                            strokeWidth={2.5}
+                            activeDot={{ r: 8 }}
+                          />
+                        </LineChart>
+                      </div>
+                      <hr />
+                    </div>
+                  )}
+                </div>
+
+                {loading && (
+                  <div className="loader">
+                    <div className="loader__circle"></div>
+                    <div className="loader__circle"></div>
+                    <div className="loader__circle"></div>
+                    <div className="loader__circle"></div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div>
+              <Login />
+            </div>
+          )}
         </div>
-      )}
+      </div>
+      <div id="right">
+        <h2 className="listed-header">
+          My favourite Cities{" "}
+          <i
+            className="fa-solid fa-heart"
+            style={{ color: "red", fontSize: "25px" }}
+          ></i>
+        </h2>
+        {favourites.length
+          ? favourites.map((favourite, index) => (
+              <div key={index}>
+                <ul>
+                  <li
+                    className="listed"
+                    onClick={() => {
+                      setName(favourite.name);
+                      setClickedFavourites(true);
+                    }}
+                  >
+                    {favourite.name}
+                  </li>
+                </ul>
+              </div>
+            ))
+          : null}
+      </div>
     </div>
   );
 }
