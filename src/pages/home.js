@@ -895,47 +895,72 @@ function Home({ weatherMain }) {
                       </div>
                       <hr />
                       {/* Graph goes here */}
-                      <button onClick={() => weeklyGraph("temp")}>
-                        Temp
-                      </button>{" "}
-                      <button onClick={() => weeklyGraph("humidity")}>
-                        Humidity
-                      </button>{" "}
-                      <button onClick={() => weeklyGraph("wind")}>Wind</button>
-                      <h2>{dataKeyName(dataKey)}</h2>
-                      <div>
-                        <LineChart
-                          width={600}
-                          height={300}
-                          data={weeklyData}
-                          margin={{ top: 20, right: 120, left: 0, bottom: 20 }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis
-                            dataKey="name"
-                            label={{
-                              value: "",
-                              position: "insideBottomRight",
-                              offset: -5,
+                      <div className="graph-container">
+                        <div className="button-container">
+                          <button
+                            className="graph-button-temp"
+                            onClick={() => weeklyGraph("temp")}
+                          >
+                            Temp
+                          </button>
+                          <button
+                            className="graph-button-humidity"
+                            onClick={() => weeklyGraph("humidity")}
+                          >
+                            Humidity
+                          </button>
+                          <button
+                            className="graph-button-wind"
+                            onClick={() => weeklyGraph("wind")}
+                          >
+                            Wind
+                          </button>
+                        </div>
+                        <h2 className="graph-title">{dataKeyName(dataKey)}</h2>
+                        <div className="chart-container">
+                          <LineChart
+                            width={600}
+                            height={300}
+                            data={weeklyData}
+                            margin={{
+                              top: 20,
+                              right: 20,
+                              left: 20,
+                              bottom: 20,
                             }}
-                          />
-                          <YAxis
-                            label={{
-                              value: dataKeyName(dataKey),
-                              angle: -90,
-                              position: "insideLeft",
-                            }}
-                          />
-                          <Tooltip />
-                          <Legend />
-                          <Line
-                            type="monotone"
-                            dataKey={dataKey}
-                            stroke={getColor(dataKey)}
-                            strokeWidth={2.5}
-                            activeDot={{ r: 8 }}
-                          />
-                        </LineChart>
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis
+                              dataKey="name"
+                              label={{
+                                value: "",
+                                position: "insideBottomRight",
+                                offset: -5,
+                              }}
+                            />
+                            <YAxis
+                              label={{
+                                value: dataKeyName(dataKey),
+                                angle: -90,
+                                position: "insideLeft",
+                              }}
+                            />
+                            <Tooltip
+                              contentStyle={{
+                                backgroundColor: "#f5f5f5",
+                                borderRadius: "10px",
+                              }}
+                            />
+                            <Legend />
+                            <Line
+                              type="monotone"
+                              dataKey={dataKey}
+                              stroke={getColor(dataKey)}
+                              strokeWidth={2.5}
+                              activeDot={{ r: 8 }}
+                            />
+                          </LineChart>
+                        </div>
                       </div>
                       <hr />
                     </div>
