@@ -46,6 +46,16 @@ export default function Navbar() {
           >
             Favourite Cities
           </Link>
+          <Link
+            style={{
+              marginRight: "10px",
+              color: "#333",
+              textDecoration: "none",
+            }}
+            to="/tz"
+          >
+            Tz
+          </Link>
         </div>
       ) : null}
       <div style={{ display: "flex", alignItems: "center" }}>

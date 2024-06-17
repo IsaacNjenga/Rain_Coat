@@ -14,6 +14,10 @@ import {
   Tooltip,
 } from "recharts";
 import Login from "./login.js";
+import humidity from "../img/icons/humidity.png";
+import wind from "../img/icons/wind-turbine.png";
+import sunrise from "../img/icons/sunrise.png";
+import sunset from "../img/icons/sunset.png";
 
 function Home({ weatherMain }) {
   const [loading, setLoading] = useState(false);
@@ -36,6 +40,8 @@ function Home({ weatherMain }) {
   const [unitName, setUnitName] = useState({ temp: "C", speed: "Km/h" });
   const { currentUser } = useAuth();
   const [clickedFavourites, setClickedFavourites] = useState(false);
+  const [showTime, setShowTime] = useState(false);
+  const [times, setTimes] = useState([]);
 
   useEffect(() => {
     if (currentUser) {
@@ -356,207 +362,144 @@ function Home({ weatherMain }) {
         name
       )}&units=metric`;
 
-      await Promise.all([axios.get(apiUrl), axios.get(apiForecast)])
-        .then(([currentWeatherResponse, forecastWeatherResponse]) => {
-          const currentResponse = currentWeatherResponse.data;
-          const weatherMain = currentResponse.weather[0].main;
-          const weatherDescription =
-            currentResponse.weather[0].main.description;
+      try {
+        const [currentWeatherResponse, forecastWeatherResponse] =
+          await Promise.all([axios.get(apiUrl), axios.get(apiForecast)]);
 
-          const timeDay = currentDayTime();
-          const getDayOrNight = (timeDay) => {
-            const time = new Date(timeDay);
-            const hours = time.getHours();
-            return hours >= 6 && hours < 18 ? "day" : "night";
-          };
-          const timeOfDay = getDayOrNight(timeDay);
+        const currentResponse = currentWeatherResponse.data;
+        const weatherMain = currentResponse.weather[0].main;
+        const weatherDescription = currentResponse.weather[0].main.description;
 
-          const sunrise = new Date(
-            currentResponse.sys.sunrise * 1000
-          ).toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-          });
+        const timeDay = currentDayTime();
+        const getDayOrNight = (timeDay) => {
+          const time = new Date(timeDay);
+          const hours = time.getHours();
+          return hours >= 6 && hours < 18 ? "day" : "night";
+        };
+        const timeOfDay = getDayOrNight(timeDay);
 
-          const sunset = new Date(
-            currentResponse.sys.sunset * 1000
-          ).toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-          });
+        const sunrise = new Date(
+          currentResponse.sys.sunrise * 1000
+        ).toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        });
 
-          const description =
-            currentResponse.weather[0].description.charAt(0).toUpperCase() +
-            currentResponse.weather[0].description.slice(1).toLowerCase();
+        const sunset = new Date(
+          currentResponse.sys.sunset * 1000
+        ).toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        });
 
-          setData({
-            celcius: currentResponse.main.temp,
-            name: currentResponse.name,
-            humidity: currentResponse.main.humidity,
-            speed: currentResponse.wind.speed,
-            image: (
-              <WeatherIcon
-                weatherMain={weatherMain}
-                weatherDescription={weatherDescription}
-                timeOfDay={timeOfDay}
-              />
-            ),
-            description: description,
-            country: currentResponse.sys.country,
-            tempMax: currentResponse.main.temp_max,
-            tempMin: currentResponse.main.temp_min,
-            feelsLike: currentResponse.main.feels_like,
-            sunrise: sunrise,
-            sunset: sunset,
-          });
+        const description =
+          currentResponse.weather[0].description.charAt(0).toUpperCase() +
+          currentResponse.weather[0].description.slice(1).toLowerCase();
 
-          const word =
-            name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-          if (!loading) {
-            toast.success(word);
-          }
+        setData({
+          celcius: currentResponse.main.temp,
+          name: currentResponse.name,
+          humidity: currentResponse.main.humidity,
+          speed: currentResponse.wind.speed,
+          image: (
+            <WeatherIcon
+              weatherMain={weatherMain}
+              weatherDescription={weatherDescription}
+              timeOfDay={timeOfDay}
+            />
+          ),
+          description: description,
+          country: currentResponse.sys.country,
+          tempMax: currentResponse.main.temp_max,
+          tempMin: currentResponse.main.temp_min,
+          feelsLike: currentResponse.main.feels_like,
+          sunrise: sunrise,
+          sunset: sunset,
+          latitude: currentResponse.coord.lat,
+          longitude: currentResponse.coord.lon,
+        });
 
-          const today = new Date();
-          const todayDate = new Date().toISOString().split("T")[0];
+        const latitude = currentResponse.coord.lat;
+        const longitude = currentResponse.coord.lon;
 
-          const tomorrow = new Date();
-          tomorrow.setDate(today.getDate() + 1);
-          const tomorrowDate = tomorrow.toISOString().split("T")[0];
+        const tzResponse = await axios.get(
+          `/timeZone?lat=${latitude}&lon=${longitude}`
+        );
+        setShowTime(true);
+        console.log("Timezone data:", tzResponse.data);
+        const timeRefined = new Date(
+          tzResponse.data.formatted
+        ).toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        });
+        setTimes({ time: timeRefined });
 
-          const forecastData = forecastWeatherResponse.data.list.slice(0, 40);
+        const word = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+        if (!loading) {
+          toast.success(word);
+        }
 
-          //forecasted data for the day
-          const processedForecastData = forecastData
-            .map((forecast) => {
-              const getDayOrNight = (dateString) => {
-                const time = new Date(dateString);
-                const hours = time.getHours();
-                return hours >= 6 && hours < 18 ? "day" : "night";
-              };
-              const dateString = forecast.dt_txt;
-              const timeOfDay = getDayOrNight(dateString);
-              const forecastDate = new Date(dateString)
-                .toISOString()
-                .split("T")[0];
-              const convertToDate = new Date(dateString);
-              const options = {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-                weekday: "short",
-              };
+        const today = new Date();
+        const todayDate = new Date().toISOString().split("T")[0];
 
-              const optionsTime = {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              };
-              let formattedDateString = new Intl.DateTimeFormat(
-                "en-GB",
-                options
-              ).format(convertToDate);
-              const formattedTimeString = new Intl.DateTimeFormat(
-                "en-GB",
-                optionsTime
-              ).format(convertToDate);
+        const tomorrow = new Date();
+        tomorrow.setDate(today.getDate() + 1);
+        const tomorrowDate = tomorrow.toISOString().split("T")[0];
 
-              const description =
-                forecast.weather[0].description.charAt(0).toUpperCase() +
-                forecast.weather[0].description.slice(1).toLowerCase();
+        const forecastData = forecastWeatherResponse.data.list.slice(0, 40);
 
-              const weatherMain = forecast.weather[0].main;
-              const weatherDescription = forecast.weather[0].main.description;
+        // Process forecast data for the day
+        const processedForecastData = forecastData
+          .map((forecast) => {
+            const getDayOrNight = (dateString) => {
+              const time = new Date(dateString);
+              const hours = time.getHours();
+              return hours >= 6 && hours < 18 ? "day" : "night";
+            };
+            const dateString = forecast.dt_txt;
+            const timeOfDay = getDayOrNight(dateString);
+            const forecastDate = new Date(dateString)
+              .toISOString()
+              .split("T")[0];
+            const convertToDate = new Date(dateString);
+            const options = {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              weekday: "short",
+            };
 
-              if (forecastDate === todayDate) {
-                return {
-                  celcius: forecast.main.temp,
-                  name: forecastWeatherResponse.data.city.name,
-                  humidity: forecast.main.humidity,
-                  speed: forecast.wind.speed,
-                  image: (
-                    <WeatherIcon
-                      weatherMain={weatherMain}
-                      weatherDescription={weatherDescription}
-                      timeOfDay={timeOfDay}
-                    />
-                  ),
-                  description: description,
-                  country: forecastWeatherResponse.data.city.country,
-                  date: formattedDateString,
-                  time: formattedTimeString,
-                };
-              } else {
-                return null;
-              }
-            })
-            .filter(Boolean);
+            const optionsTime = {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            };
+            let formattedDateString = new Intl.DateTimeFormat(
+              "en-GB",
+              options
+            ).format(convertToDate);
+            const formattedTimeString = new Intl.DateTimeFormat(
+              "en-GB",
+              optionsTime
+            ).format(convertToDate);
 
-          //forecasted data for the week
-          const groupedData = forecastData.reduce((acc, forecast) => {
-            if (forecast.dt_txt) {
-              // Ensure dt_txt exists
-              const dateString = forecast.dt_txt.split(" ")[0];
-              if (!acc[dateString]) {
-                acc[dateString] = [];
-              }
-              acc[dateString].push(forecast);
-            }
-            return acc;
-          }, {});
+            const description =
+              forecast.weather[0].description.charAt(0).toUpperCase() +
+              forecast.weather[0].description.slice(1).toLowerCase();
 
-          const processedForecastData2 = Object.keys(groupedData).map(
-            (date) => {
-              const dateString = "2024-06-04 12:00:00";
-              const getDayOrNight = (dateString) => {
-                const time = new Date(dateString);
-                const hours = time.getHours();
-                return hours >= 6 && hours < 18 ? "day" : "night";
-              };
-              const timeOfDay = getDayOrNight(dateString);
-              const dayForecasts = groupedData[date];
-              const total = dayForecasts.reduce(
-                (acc, forecast) => {
-                  acc.temp += forecast.main.temp;
-                  acc.wind += forecast.wind.speed;
-                  acc.humidity += forecast.main.humidity;
-                  return acc;
-                },
-                { temp: 0, wind: 0, humidity: 0 }
-              );
+            const weatherMain = forecast.weather[0].main;
+            const weatherDescription = forecast.weather[0].main.description;
 
-              // Compute average temperature
-              const averageTemp = total.temp / dayForecasts.length;
-              const averageHumidity = total.humidity / dayForecasts.length;
-              const averageWind = total.wind / dayForecasts.length;
-
-              // Format the date
-              let formattedDateString = "";
-              if (date === todayDate) {
-                formattedDateString = "Today";
-              } else if (date === tomorrowDate) {
-                formattedDateString = "Tomorrow";
-              } else {
-                formattedDateString = new Date(date).toLocaleDateString(
-                  "en-US",
-                  {
-                    month: "2-digit",
-                    day: "2-digit",
-                  }
-                );
-              }
-
-              // Get the short description
-              const description =
-                dayForecasts[0].weather[0].description.charAt(0).toUpperCase() +
-                dayForecasts[0].weather[0].description.slice(1).toLowerCase();
-
-              const weatherMain = dayForecasts[0].weather[0].main;
-              const weatherDescription = dayForecasts[0].weather[0].description;
-
+            if (forecastDate === todayDate) {
               return {
-                day: formattedDateString,
+                celcius: forecast.main.temp,
+                name: forecastWeatherResponse.data.city.name,
+                humidity: forecast.main.humidity,
+                speed: forecast.wind.speed,
                 image: (
                   <WeatherIcon
                     weatherMain={weatherMain}
@@ -564,28 +507,100 @@ function Home({ weatherMain }) {
                     timeOfDay={timeOfDay}
                   />
                 ),
-                averageTemp: averageTemp.toFixed(1),
-                averageWind: averageWind.toFixed(1),
-                averageHumidity: averageHumidity.toFixed(1),
                 description: description,
+                country: forecastWeatherResponse.data.city.country,
+                date: formattedDateString,
+                time: formattedTimeString,
               };
+            } else {
+              return null;
             }
+          })
+          .filter(Boolean);
+
+        // Process forecast data for the week
+        const groupedData = forecastData.reduce((acc, forecast) => {
+          if (forecast.dt_txt) {
+            const dateString = forecast.dt_txt.split(" ")[0];
+            if (!acc[dateString]) {
+              acc[dateString] = [];
+            }
+            acc[dateString].push(forecast);
+          }
+          return acc;
+        }, {});
+
+        const processedForecastData2 = Object.keys(groupedData).map((date) => {
+          const dateString = "2024-06-04 12:00:00";
+          const getDayOrNight = (dateString) => {
+            const time = new Date(dateString);
+            const hours = time.getHours();
+            return hours >= 6 && hours < 18 ? "day" : "night";
+          };
+          const timeOfDay = getDayOrNight(dateString);
+          const dayForecasts = groupedData[date];
+          const total = dayForecasts.reduce(
+            (acc, forecast) => {
+              acc.temp += forecast.main.temp;
+              acc.wind += forecast.wind.speed;
+              acc.humidity += forecast.main.humidity;
+              return acc;
+            },
+            { temp: 0, wind: 0, humidity: 0 }
           );
 
-          setTodaysData(processedForecastData);
-          setData2(processedForecastData2);
-          setLoading(false);
-          setError("");
-        })
-        .catch((error) => {
-          setLoading(false);
-          if (error.response && error.response.status === 404) {
-            setError("City not found. Please try again.");
+          const averageTemp = total.temp / dayForecasts.length;
+          const averageHumidity = total.humidity / dayForecasts.length;
+          const averageWind = total.wind / dayForecasts.length;
+
+          let formattedDateString = "";
+          if (date === todayDate) {
+            formattedDateString = "Today";
+          } else if (date === tomorrowDate) {
+            formattedDateString = "Tomorrow";
           } else {
-            setError("Failed to fetch weather data.");
+            formattedDateString = new Date(date).toLocaleDateString("en-US", {
+              month: "2-digit",
+              day: "2-digit",
+            });
           }
-          console.error("Error fetching weather data:", error);
+
+          const description =
+            dayForecasts[0].weather[0].description.charAt(0).toUpperCase() +
+            dayForecasts[0].weather[0].description.slice(1).toLowerCase();
+
+          const weatherMain = dayForecasts[0].weather[0].main;
+          const weatherDescription = dayForecasts[0].weather[0].description;
+
+          return {
+            day: formattedDateString,
+            image: (
+              <WeatherIcon
+                weatherMain={weatherMain}
+                weatherDescription={weatherDescription}
+                timeOfDay={timeOfDay}
+              />
+            ),
+            averageTemp: averageTemp.toFixed(1),
+            averageWind: averageWind.toFixed(1),
+            averageHumidity: averageHumidity.toFixed(1),
+            description: description,
+          };
         });
+
+        setTodaysData(processedForecastData);
+        setData2(processedForecastData2);
+        setLoading(false);
+        setError("");
+      } catch (error) {
+        setLoading(false);
+        if (error.response && error.response.status === 404) {
+          setError("City not found. Please try again.");
+        } else {
+          setError("Failed to fetch weather data.");
+        }
+        console.error("Error fetching weather data:", error);
+      }
     }
   };
 
@@ -705,7 +720,7 @@ function Home({ weatherMain }) {
         <div className="details">
           <div className="col-humidity">
             <h3>Comfort Level</h3>
-            <i className="material-icons comfort-icon">water_drop</i>
+            <img src={humidity} alt="Humidity" className="icon-image" />
             <div className="humidity">
               <p className="humidity-value">{data.humidity}%</p>
               <p>Humidity</p>
@@ -714,9 +729,10 @@ function Home({ weatherMain }) {
               </p>
             </div>
           </div>
+
           <div className="col-wind">
             <h3>Wind</h3>
-            <i className="material-icons wind-icon">air</i>
+            <img src={wind} alt="Wind Speed" className="icon-image" />
             <div className="wind">
               <p className="wind-speed">
                 {Math.round(data.speed)} {unitName.speed}
@@ -724,11 +740,13 @@ function Home({ weatherMain }) {
               <p>Wind Speed</p>
             </div>
           </div>
+
           <div className="col-sunrise-sunset">
             <h3>Sunrise & Sunset</h3>
-            <i className="fas fa-sun sun-icon"></i>
             <div className="sunrise-sunset">
+              <img src={sunrise} alt="Sunrise" className="icon-image" />
               <p>Sunrise: {data.sunrise}</p>
+              <img src={sunset} alt="Sunset" className="icon-image" />
               <p>Sunset: {data.sunset}</p>
             </div>
           </div>
@@ -819,6 +837,7 @@ function Home({ weatherMain }) {
                             ></i>
                           )}
                         </button>
+                        {times ? <p>{times.time}</p> : null}
                       </h4>
                       <hr />
                       <p>

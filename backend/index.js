@@ -25,6 +25,20 @@ mongoose
 
 const API_KEY = "b882f0719ba7e08e90a827d174b54f6a";
 const API_BASE_URL = "https://api.openweathermap.org/data/2.5";
+const tzKey = "TY5MMDJXSAP2";
+const API_TZ_BASE_URL = "http://api.timezonedb.com/v2.1/get-time-zone";
+
+app.get("/timeZone", async (req, res) => {
+  const { lat, lon } = req.query;
+  const apiUrl = `${API_TZ_BASE_URL}?key=${tzKey}&format=json&by=position&lat=${lat}&lng=${lon}`;
+  try {
+    const response = await axios.get(apiUrl);
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error fetching timezone data:", error);
+    res.status(500).send("Error fetching timezone data");
+  }
+});
 
 // Endpoint to fetch weather data
 app.get("/weather", async (req, res) => {

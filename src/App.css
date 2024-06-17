@@ -3,7 +3,7 @@ body {
 }
 
 .weather {
-  width: 500px;
+  width: 780px;
   padding: 0px;
   border-radius: 10px;
   margin: 50px auto;
@@ -182,7 +182,6 @@ body {
 
 .details {
   display: flex;
-  flex-direction: column;
   justify-content: space-around;
   gap: 20px;
   padding: 20px;
@@ -192,10 +191,12 @@ body {
 }
 
 .details > div {
+  flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
   text-align: center;
-  padding: 10px;
+  padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s;
@@ -203,6 +204,30 @@ body {
 
 .details > div:hover {
   transform: scale(1.05);
+}
+
+.icon-image {
+  width: 100px; 
+  height: 100px; 
+  object-fit: contain;
+}
+
+.humidity,
+.wind,
+.sunrise-sunset {
+  margin-top: 10px;
+}
+
+.sunrise-sunset {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sunrise-sunset img {
+  width: 80px; 
+  height: 80px; 
+  object-fit: contain;
 }
 
 .comfort-icon {
@@ -328,6 +353,12 @@ nav a.active {
   object-fit: contain;
 }
 
+.humidity-image {
+  width: 150px;
+  height: 100px;
+  object-fit: contain;
+}
+
 #left,
 #middle,
 #right {
@@ -396,10 +427,10 @@ nav a.active {
 
 /*loader*/
 .loader {
-  position: fixed; /* Ensures the loader stays in place when scrolling */
-  top: 50%; /* Positions vertically at the center */
-  left: 50%; /* Positions horizontally at the center */
-  transform: translate(-50%, -50%); /* Adjusts position based on width/height */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   justify-content: center;
   align-items: center;
