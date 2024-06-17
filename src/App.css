@@ -190,10 +190,13 @@ body {
   color: white;
 }
 
-.details > div {
-  flex: 1;
+.details {
   display: flex;
   flex-direction: column;
+  gap: 16px;
+  flex-wrap: wrap-reverse;
+}
+.details > div {
   align-items: center;
   text-align: center;
   padding: 20px;
@@ -207,8 +210,8 @@ body {
 }
 
 .icon-image {
-  width: 100px; 
-  height: 100px; 
+  width: 130px;
+  height: 110px;
   object-fit: contain;
 }
 
@@ -225,30 +228,9 @@ body {
 }
 
 .sunrise-sunset img {
-  width: 80px; 
-  height: 80px; 
+  width: 80px;
+  height: 80px;
   object-fit: contain;
-}
-
-.comfort-icon {
-  color: #05a5d1;
-}
-
-.wind-icon {
-  color: #ffffff;
-}
-
-.sun-icon {
-  font-size: 55px;
-  color: #ffcc33;
-}
-
-.humidity,
-.wind,
-.sunrise-sunset {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
 }
 
 .humidity-value,

@@ -716,42 +716,48 @@ function Home({ weatherMain }) {
 
   return (
     <div>
-      <div id="left">
-        <div className="details">
-          <div className="col-humidity">
-            <h3>Comfort Level</h3>
-            <img src={humidity} alt="Humidity" className="icon-image" />
-            <div className="humidity">
-              <p className="humidity-value">{data.humidity}%</p>
-              <p>Humidity</p>
-              <p>
-                Feels like: {Math.round(data.feelsLike)}°{unitName.temp}
-              </p>
+      {currentUser ? (
+        <div id="left">
+          <div className="details">
+            <div className="col-humidity">
+              <h3>Comfort Level</h3>
+              <div className="humidity">
+                <img src={humidity} alt="Humidity" className="icon-image" />
+                <p className="humidity-value">{data.humidity}%</p>
+                <p>Humidity</p>
+                <p>
+                  Feels like: {Math.round(data.feelsLike)}°{unitName.temp}
+                </p>
+              </div>
             </div>
-          </div>
 
-          <div className="col-wind">
-            <h3>Wind</h3>
-            <img src={wind} alt="Wind Speed" className="icon-image" />
-            <div className="wind">
-              <p className="wind-speed">
-                {Math.round(data.speed)} {unitName.speed}
-              </p>
-              <p>Wind Speed</p>
+            <div className="col-wind">
+              <h3>Wind</h3>
+              <div className="wind">
+                <img src={wind} alt="Wind Speed" className="icon-image" />
+                <p className="wind-speed">
+                  {Math.round(data.speed)} {unitName.speed}
+                </p>
+                <p>Wind Speed</p>
+              </div>
             </div>
-          </div>
 
-          <div className="col-sunrise-sunset">
-            <h3>Sunrise & Sunset</h3>
-            <div className="sunrise-sunset">
-              <img src={sunrise} alt="Sunrise" className="icon-image" />
-              <p>Sunrise: {data.sunrise}</p>
-              <img src={sunset} alt="Sunset" className="icon-image" />
-              <p>Sunset: {data.sunset}</p>
+            <div className="col-sunrise-sunset">
+              <h3>Sunrise & Sunset</h3>
+              <div className="sunrise-sunset">
+                <img src={sunset} alt="Sunrise" className="icon-image" />
+                <p>Sunrise: {data.sunrise}</p>
+                <img src={sunrise} alt="Sunset" className="icon-image" />
+                <p>Sunset: {data.sunset}</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div>
+          <Login />
+        </div>
+      )}
       <div id="middle">
         <div className="container2">
           {currentUser ? (
@@ -818,7 +824,9 @@ function Home({ weatherMain }) {
                         </div>
                       </div>
                       <h4>
-                        <span style={{ display: "inline-block" }}>
+                        <span
+                          style={{ display: "inline-block", fontSize: "45px" }}
+                        >
                           {data.name}, {data.country}
                         </span>
                         <button
@@ -828,12 +836,12 @@ function Home({ weatherMain }) {
                           {favourites.some((fav) => fav.name === data.name) ? (
                             <i
                               className="fa-solid fa-heart"
-                              style={{ color: "red", fontSize: "25px" }}
+                              style={{ color: "red", fontSize: "50px" }}
                             ></i>
                           ) : (
                             <i
                               className="fa-regular fa-heart"
-                              style={{ color: "white", fontSize: "25px" }}
+                              style={{ color: "white", fontSize: "50px" }}
                             ></i>
                           )}
                         </button>
@@ -951,32 +959,38 @@ function Home({ weatherMain }) {
           )}
         </div>
       </div>
-      <div id="right">
-        <h2 className="listed-header">
-          My favourite Cities{" "}
-          <i
-            className="fa-solid fa-heart"
-            style={{ color: "red", fontSize: "25px" }}
-          ></i>
-        </h2>
-        {favourites.length
-          ? favourites.map((favourite, index) => (
-              <div key={index}>
-                <ul>
-                  <li
-                    className="listed"
-                    onClick={() => {
-                      setName(favourite.name);
-                      setClickedFavourites(true);
-                    }}
-                  >
-                    {favourite.name}
-                  </li>
-                </ul>
-              </div>
-            ))
-          : null}
-      </div>
+      {currentUser ? (
+        <div id="right">
+          <h2 className="listed-header">
+            My favourite Cities{" "}
+            <i
+              className="fa-solid fa-heart"
+              style={{ color: "red", fontSize: "25px" }}
+            ></i>
+          </h2>
+          {favourites.length
+            ? favourites.map((favourite, index) => (
+                <div key={index}>
+                  <ul>
+                    <li
+                      className="listed"
+                      onClick={() => {
+                        setName(favourite.name);
+                        setClickedFavourites(true);
+                      }}
+                    >
+                      {favourite.name}
+                    </li>
+                  </ul>
+                </div>
+              ))
+            : null}
+        </div>
+      ) : (
+        <div>
+          <Login />
+        </div>
+      )}
     </div>
   );
 }
