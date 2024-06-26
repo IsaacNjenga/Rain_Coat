@@ -8,7 +8,7 @@ import "./favourites.css";
 function Favourites() {
   const [favourites, setFavourites] = useState([]);
   const { currentUser } = useAuth();
-  const navigate = useNavigate(); // Use useNavigate instead of useHistory
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     if (currentUser) {
