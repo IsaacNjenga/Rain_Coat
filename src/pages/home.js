@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import axios from "axios";
+import { useLocation as useReactRouterLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useAuth } from "../contexts/AuthContext.js";
 import WeatherIcon from "../weatherIcon.js";
@@ -42,6 +43,49 @@ function Home({ weatherMain }) {
   const [clickedFavourites, setClickedFavourites] = useState(false);
   const [showTime, setShowTime] = useState(false);
   const [times, setTimes] = useState([]);
+  const reactRouterLocation = useReactRouterLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(reactRouterLocation.search);
+    const city = params.get("city");
+
+    if (city) {
+      fetchWeatherDataByCity(city);
+    } else if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          setError(error.message);
+        }
+      );
+    } else {
+      setError("Geolocation is not supported by this browser.");
+    }
+  }, [reactRouterLocation.search]);
+
+  useEffect(() => {
+    if (location.latitude && location.longitude) {
+      fetchWeatherData(location.latitude, location.longitude);
+    }
+  }, [location]);
+
+  const fetchWeatherDataByCity = async (city) => {
+    try {
+      setLoading(true);
+      const apiUrl = `/cityweather?name=${city}&units=${units}`;
+      const response = await axios.get(apiUrl);
+      // Process the response data as needed
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching weather data:", error);
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (currentUser) {

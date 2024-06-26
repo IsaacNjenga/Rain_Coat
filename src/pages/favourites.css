@@ -1,0 +1,45 @@
+/* favourites.css */
+
+.favourites-container {
+  display: flex;
+  flex-direction: column; /* Cards stack vertically */
+  gap: 16px;
+  padding: 16px;
+  align-items: center;
+  background-color: transparent; /* Remove background color from container */
+}
+
+.favourite-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  width: 80%; /* Updated to take up 80% of the width of the screen */
+  max-width: 800px; /* Adjust the maximum width if necessary */
+  height: 150px; /* Added height property */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.favourite-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.favourite-card p {
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .favourites-container {
+    padding: 8px;
+  }
+  .favourite-card {
+    width: 100%; /* Ensure full width on small screens */
+    height: 100px; /* Adjust height for small screens */
+  }
+}

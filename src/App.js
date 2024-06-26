@@ -1,3 +1,4 @@
+// App.js
 import React from "react";
 import "./App.css";
 import axios from "axios";
@@ -13,6 +14,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 
 axios.defaults.baseURL = "http://localhost:3001";
 axios.defaults.withCredentials = true;
+
 function App() {
   return (
     <div>
@@ -22,6 +24,7 @@ function App() {
           <Toaster position="top-right" toastOptions={{ duration: 1500 }} />
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Home />} /> {/* Add this line */}
             <Route path="/favourites" element={<Favourites />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
