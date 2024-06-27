@@ -4,6 +4,8 @@ import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "./favourites.css";
+import "../weatherIcon";
+import FavouriteCard from "./favouriteCard";
 
 function Favourites() {
   const [favourites, setFavourites] = useState([]);
@@ -35,13 +37,11 @@ function Favourites() {
     <div className="favourites-container">
       {favourites.length ? (
         favourites.map((favourite, index) => (
-          <div
+          <FavouriteCard
             key={index}
-            className="favourite-card"
+            city={favourite}
             onClick={() => handleCityClick(favourite.name)}
-          >
-            <p>{favourite.name}</p>
-          </div>
+          />
         ))
       ) : (
         <div>
