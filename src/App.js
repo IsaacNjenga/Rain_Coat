@@ -1,16 +1,16 @@
 // App.js
-import React from "react";
-import "./App.css";
 import axios from "axios";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "./pages/home";
-import Favourites from "./pages/favourites";
-import Navbar from "./source/navbar";
+import React from "react";
 import { Toaster } from "react-hot-toast";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "./App.css";
+import { AuthProvider } from "./contexts/AuthContext";
+import Favourites from "./pages/favourites";
+import Home from "./pages/home";
 import Login from "./pages/login";
 import SignUp from "./pages/signup";
 import Tz from "./pages/tz";
-import { AuthProvider } from "./contexts/AuthContext";
+import Navbar from "./source/navbar";
 
 axios.defaults.baseURL = "http://localhost:3001";
 axios.defaults.withCredentials = true;
@@ -37,3 +37,4 @@ function App() {
 }
 
 export default App;
+
