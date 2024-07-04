@@ -1,154 +1,42 @@
-// server.js
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const axios = require("axios");
-const favouritesModel = require("./models/favouritesModel");
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import "./config/db.js";
+import { Router } from "./routes/routes.js";
+
+dotenv.config({ path: "./config/.env" });
 
 const app = express();
+const corsOptions = {
+  origin: ["http://localhost:3000"],
+  methods: ["POST", "GET", "PUT", "DELETE"],
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json()); // to parse JSON bodies
-app.use(
-  cors({
-    origin: ["http://localhost:3000"],
-    methods: ["POST", "GET", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
 app.use(express.urlencoded({ extended: false }));
 
-mongoose
-  .connect(
-    "mongodb+srv://IsaacNjenga:cations!@cluster0.xf14h71.mongodb.net/weatherApp?retryWrites=true&w=majority&appName=Cluster0"
-  )
-  .then(() => console.log("database connected"))
-  .catch((err) => console.log("Error", err));
-
-const API_KEY = "b882f0719ba7e08e90a827d174b54f6a";
-const API_BASE_URL = "https://api.openweathermap.org/data/2.5";
-const tzKey = "TY5MMDJXSAP2";
-const API_TZ_BASE_URL = "http://api.timezonedb.com/v2.1/get-time-zone";
-
-app.get("/timeZone", async (req, res) => {
-  const { lat, lon } = req.query;
-  const apiUrl = `${API_TZ_BASE_URL}?key=${tzKey}&format=json&by=position&lat=${lat}&lng=${lon}`;
-  try {
-    const response = await axios.get(apiUrl);
-    res.json(response.data);
-  } catch (error) {
-    console.error("Error fetching timezone data:", error);
-    res.status(500).send("Error fetching timezone data");
+// Handle CORS preflight requests
+app.use((req, res, next) => {
+  console.log("Request Method:", req.method);
+  console.log("Request Headers:", req.headers);
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
+    res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.header("Access-Control-Allow-Credentials", "true");
+    return res.sendStatus(200);
   }
+  next();
 });
 
-// Endpoint to fetch weather data
-app.get("/weather", async (req, res) => {
-  const { lat, lon, units } = req.query;
-  const apiUrl = `${API_BASE_URL}/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=${units}`;
+//Main Routes
+app.use("/RainCoat", Router);
 
-  try {
-    const response = await axios.get(apiUrl, {
-      withCredentials: true,
-    });
-    res.json(response.data);
-  } catch (error) {
-    console.error("Error fetching weather:", error);
-    res
-      .status(error.response.status || 500)
-      .json({ error: "Failed to fetch weather data" });
-  }
-});
-
-// Endpoint to fetch forecast data
-app.get("/forecast", async (req, res) => {
-  const { lat, lon, units } = req.query;
-  const apiUrl = `${API_BASE_URL}/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=${units}`;
-
-  try {
-    const response = await axios.get(apiUrl, {
-      withCredentials: true,
-    });
-    res.json(response.data);
-  } catch (error) {
-    console.error("Error fetching forecast:", error);
-    res
-      .status(error.response.status || 500)
-      .json({ error: "Failed to fetch forecast data" });
-  }
-});
-
-// Endpoint to fetch weather data by city name
-app.get("/cityweather", async (req, res) => {
-  const { name, units } = req.query;
-  const apiUrl = `${API_BASE_URL}/weather?q=${name}&appid=${API_KEY}&units=${units}`;
-
-  try {
-    const response = await axios.get(apiUrl, {
-      withCredentials: true,
-    });
-    res.json(response.data);
-    console.log(name, units);
-  } catch (error) {
-    console.error("Error fetching weather:", error);
-    res
-      .status(error.response.status || 500)
-      .json({ error: "Failed to fetch weather data" });
-  }
-});
-
-// Endpoint to fetch forecast data by city name
-app.get("/cityforecast", async (req, res) => {
-  const { name, units } = req.query;
-  const apiUrl = `${API_BASE_URL}/forecast?q=${name}&appid=${API_KEY}&units=${units}`;
-
-  try {
-    const response = await axios.get(apiUrl, {
-      withCredentials: true,
-    });
-    res.json(response.data);
-    console.log(name, units);
-  } catch (error) {
-    console.error("Error fetching forecast:", error);
-    res
-      .status(error.response.status || 500)
-      .json({ error: "Failed to fetch forecast data" });
-  }
-});
-
-app.get("/favourites/:userId", (req, res) => {
-  const { userId } = req.params;
-  favouritesModel
-    .find({ userId })
-    .then((favourites) => {
-      res.json(favourites);
-    })
-    .catch((error) => {
-      res.json({ message: "Error", error });
-    });
-});
-
-app.post("/addFavourite", (req, res) => {
-  const { userId, name } = req.body;
-  const newFavourite = new favouritesModel({ userId, name });
-  newFavourite
-    .save()
-    .then((favourite) => {
-      res.json(favourite);
-    })
-    .catch((error) => {
-      res.json({ message: "Error", error });
-    });
-});
-
-app.delete("/removeFavourite/:id", (req, res) => {
-  const id = req.params.id;
-  favouritesModel
-    .findByIdAndDelete({ _id: id })
-    .then((favourites) => {
-      res.json(favourites);
-    })
-    .catch((err) => res.json(err));
-});
-
-app.listen(3001, () => {
-  console.log("Connected");
+const PORT = process.env.PORT;
+app.listen(PORT, () => {
+  console.log(`Connected!`);
 });

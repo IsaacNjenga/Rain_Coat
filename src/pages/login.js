@@ -4,6 +4,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../source/firebase";
 import "react-toastify/dist/ReactToastify.css";
 import toast from "react-hot-toast";
+import "../assets/css/loginSignupPage.css";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -17,15 +18,15 @@ function Login() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      toast.success("You have logged in"); 
+      toast.success("You have logged in");
       setTimeout(() => {
         navigate("/");
-      }); 
+      });
     } catch (error) {
       setError(
         "Failed to log in. Please check your credentials and try again."
       );
-      console.error("Login Error:", error); 
+      console.error("Login Error:", error);
     }
   };
 

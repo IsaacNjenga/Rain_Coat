@@ -14,6 +14,10 @@ import {
   Legend,
   Tooltip,
 } from "recharts";
+import "../assets/css/loader.css";
+import "../assets/css/mainPage.css";
+import "../assets/css/comfortPage.css";
+import "../assets/css/graph.css";
 import Login from "./login.js";
 import humidity from "../img/icons/humidity.png";
 import wind from "../img/icons/wind-turbine.png";
@@ -78,8 +82,7 @@ function Home({ weatherMain }) {
     try {
       setLoading(true);
       const apiUrl = `/cityweather?name=${city}&units=${units}`;
-      const response = await axios.get(apiUrl);
-      // Process the response data as needed
+      await axios.get(apiUrl);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching weather data:", error);
@@ -472,6 +475,7 @@ function Home({ weatherMain }) {
           `/timeZone?lat=${latitude}&lon=${longitude}`
         );
         setShowTime(true);
+        console.log(showTime);
         console.log("Timezone data:", tzResponse.data);
         const timeRefined = new Date(
           tzResponse.data.formatted

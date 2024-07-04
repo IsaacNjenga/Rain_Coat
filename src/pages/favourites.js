@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import "./favourites.css";
 import "../weatherIcon";
 import FavouriteCard from "./favouriteCard";
 
