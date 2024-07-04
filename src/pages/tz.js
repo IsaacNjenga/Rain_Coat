@@ -1,5 +1,5 @@
-import React from "react";
 import { DateTime } from "luxon";
+import React from "react";
 
 const cities = [
   { name: "New York", timezone: "America/New_York" },
@@ -35,12 +35,14 @@ const styles = {
     flexDirection: "column",
     alignItems: "center",
     padding: "20px",
-    fontFamily: "Arial, sans-serif",
+    fontFamily: "Segoe UI, sans-serif",
     background: "#f0f0f0",
     minHeight: "100vh",
   },
   header: {
     marginBottom: "20px",
+    color: "#333",
+    textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
   },
   citiesContainer: {
     display: "flex",
@@ -55,7 +57,9 @@ const styles = {
     padding: "20px",
     textAlign: "center",
     width: "200px",
-  },
+    transition: "transform 0.3s, box-shadow 0.3s",
+  }
 };
 
 export default Tz;
+
