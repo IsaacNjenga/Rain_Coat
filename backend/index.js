@@ -8,7 +8,7 @@ dotenv.config({ path: "./config/.env" });
 
 const app = express();
 const corsOptions = {
-  origin: ["http://localhost:3000","https://rain-coat-front.vercel.app/"],
+  origin: ["http://localhost:3000","https://rain-coat-front.vercel.app"],
   methods: ["POST", "GET", "PUT", "DELETE"],
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -17,7 +17,11 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json()); // to parse JSON bodies
-app.use(express.urlencoded({ extended: false }));
+
+//Main Routes
+app.use("/RainCoat", Router);
+
+app.options("*", cors(corsOptions));
 
 // Handle CORS preflight requests
 app.use((req, res, next) => {
@@ -32,9 +36,6 @@ app.use((req, res, next) => {
   }
   next();
 });
-
-//Main Routes
-app.use("/RainCoat", Router);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
