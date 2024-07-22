@@ -8,7 +8,7 @@ dotenv.config({ path: "./config/.env" });
 
 const app = express();
 const corsOptions = {
-  origin: ["http://localhost:3000"],
+  origin: ["http://localhost:3000","https://rain-coat-front.vercel.app/"],
   methods: ["POST", "GET", "PUT", "DELETE"],
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],

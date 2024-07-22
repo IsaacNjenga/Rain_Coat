@@ -197,6 +197,9 @@ function Home({ weatherMain }) {
         axios.get(apiUrl2),
       ]);
 
+      console.log(response)
+      console.log(response2)
+
       const weatherMain = response.data.weather[0].main;
       const weatherDescription = response.data.weather[0].main.description;
       const forecastWeather = response2.data.list.slice(0, 40);

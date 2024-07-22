@@ -13,6 +13,7 @@ const timeZone = async (req, res) => {
   const apiUrl = `${API_TZ_BASE_URL}?key=${tzKey}&format=json&by=position&lat=${lat}&lng=${lon}`;
   try {
     const response = await axios.get(apiUrl);
+    console.log(response.data);
     res.json(response.data);
   } catch (error) {
     console.error("Error fetching timezone data:", error);
@@ -24,6 +25,7 @@ const timeZone = async (req, res) => {
 const weather = async (req, res) => {
   const { lat, lon, units } = req.query;
   const apiUrl = `${API_BASE_URL}/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=${units}`;
+  //const apiUrl = `${API_BASE_URL}/weather?lat=-1.294336&lon=36.78208&appid=${API_KEY}&units=metric`;
 
   try {
     const response = await axios.get(apiUrl, {
