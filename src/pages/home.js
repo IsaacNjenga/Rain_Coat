@@ -197,8 +197,8 @@ function Home({ weatherMain }) {
         axios.get(apiUrl2),
       ]);
 
-      console.log(response)
-      console.log(response2)
+      console.log(response);
+      console.log(response2);
 
       const weatherMain = response.data.weather[0].main;
       const weatherDescription = response.data.weather[0].main.description;
@@ -766,7 +766,7 @@ function Home({ weatherMain }) {
   };
 
   return (
-    <div>
+    <div data-cy="main-div">
       {currentUser ? (
         <div id="left">
           <div className="details">
@@ -1037,13 +1037,7 @@ function Home({ weatherMain }) {
       </div>
       {currentUser ? (
         <div id="right">
-          <h2 className="listed-header">
-            My favourite Cities{" "}
-            <i
-              className="fa-solid fa-heart"
-              style={{ color: "red", fontSize: "25px" }}
-            ></i>
-          </h2>
+          <h2 className="listed-header">My favourite Cities</h2>
           {favourites.length
             ? favourites.map((favourite, index) => (
                 <div key={index}>
